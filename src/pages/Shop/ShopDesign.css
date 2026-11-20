@@ -1,0 +1,67 @@
+
+/* Shop All — preserve the existing component geometry; apply the supplied floral visual theme. */
+.casaloom-shop-page{
+  background-color:#fceaf2;
+  background-size:cover;
+  background-position:center top;
+  background-attachment:fixed;
+}
+.casaloom-shop-toolbar{
+  background:linear-gradient(110deg,rgba(255,255,255,.96),rgba(255,238,247,.94) 48%,rgba(241,230,255,.94))!important;
+  border-color:rgba(255,255,255,.96)!important;
+  box-shadow:0 8px 24px rgba(104,43,83,.13),inset 0 1px 0 #fff!important;
+}
+.casaloom-shop-toolbar input,.casaloom-shop-toolbar select{
+  border-color:#e7b6cb!important;
+  background:rgba(255,255,255,.96)!important;
+  color:#54243f!important;
+}
+.casaloom-shop-toolbar input:focus,.casaloom-shop-toolbar select:focus{
+  border-color:#a72c70!important;
+  box-shadow:0 0 0 3px rgba(213,105,159,.17)!important;
+}
+.casaloom-shop-hero{
+  background:
+    radial-gradient(ellipse at 50% 12%,rgba(255,255,255,.78),transparent 34%),
+    radial-gradient(circle at 8% 80%,rgba(250,171,205,.5),transparent 30%),
+    radial-gradient(circle at 92% 20%,rgba(185,153,224,.45),transparent 32%),
+    linear-gradient(112deg,rgba(255,224,226,.84),rgba(229,207,246,.87) 50%,rgba(255,222,222,.85))!important;
+  box-shadow:0 12px 30px rgba(101,48,83,.13),inset 0 1px 0 rgba(255,255,255,.9);
+}
+.casaloom-shop-categories button{
+  box-shadow:0 7px 18px rgba(91,42,77,.13)!important;
+}
+.casaloom-shop-categories button:hover{
+  box-shadow:0 12px 24px rgba(91,42,77,.2)!important;
+}
+.casaloom-shop-products [data-3d-card]{
+  border:1px solid rgba(221,161,187,.82)!important;
+  border-radius:15px!important;
+  background:linear-gradient(180deg,#fff 0%,#fff9fc 100%)!important;
+  box-shadow:0 7px 20px rgba(104,43,83,.13)!important;
+}
+.casaloom-shop-products [data-3d-card]:hover{
+  box-shadow:0 13px 26px rgba(104,43,83,.2)!important;
+}
+.casaloom-shop-products [data-3d-card] > div:first-child{
+  background:#f8dce8!important;
+}
+.casaloom-shop-products [data-3d-card] a[href^="/product/"]:last-child{
+  border-color:#a53c75!important;
+  border-radius:8px!important;
+  background:linear-gradient(100deg,#8b245f,#bd397e)!important;
+}
+.casaloom-shop-products [data-3d-card] a[href^="/product/"]:last-child:hover{
+  background:linear-gradient(100deg,#6d174b,#a92b70)!important;
+}
+.casaloom-shop-products [data-3d-card] button[aria-label*="Save"],
+.casaloom-shop-products [data-3d-card] button[aria-label*="Remove"]{
+  border-color:#fff!important;
+  color:#963365!important;
+  box-shadow:0 3px 12px rgba(76,30,61,.15)!important;
+}
+.casaloom-shop-products [data-3d-card] span.bg-plum{
+  background:#a82e70!important;
+}
+.casaloom-shop-page .section-kicker{color:#a13c75}
+@media(max-width:767px){.casaloom-shop-page{background-attachment:scroll}}

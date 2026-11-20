@@ -1,0 +1,13 @@
+User-agent: *
+Disallow: /admin
+Disallow: /profile
+Disallow: /checkout
+Disallow: /payment
+Disallow: /my-orders
+Disallow: /my-requests
+Disallow: /customize
+Disallow: /track
+Disallow: /login
+Disallow: /register
+Disallow: /verify-otp
+# No Sitemap line yet: a sitemap needs the production domain and the live product list. See docs/DEPLOYMENT.md.

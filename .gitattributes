@@ -1,0 +1,15 @@
+# Normalise line endings so Windows and Linux checkouts produce identical diffs.
+* text=auto eol=lf
+
+# Binary files: never convert or diff as text.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.zip binary
+
+# Generated lockfile: keep out of diffs/merge noise.
+package-lock.json -diff

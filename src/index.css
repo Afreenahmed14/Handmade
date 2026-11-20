@@ -1,0 +1,1087 @@
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Lato:wght@400;500;700&family=Playfair+Display:wght@400;500;600;700&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root { color-scheme: light; }
+  html { scroll-behavior: smooth; }
+  body { @apply bg-ivory font-body text-charcoal antialiased; }
+  h1 { @apply font-display font-semibold; }
+  h2, h3 { @apply font-heading; }
+  button, a, input { -webkit-tap-highlight-color: transparent; }
+  :focus-visible { @apply outline outline-2 outline-offset-2 outline-dusty; }
+  ::selection { background: #F2DCDD; color: #51283F; }
+}
+@layer components {
+  .btn-primary { @apply inline-flex items-center justify-center gap-2 rounded-md bg-plum px-6 py-3 font-body font-bold tracking-wide text-white shadow-sm transition duration-300 hover:-translate-y-0.5 hover:bg-plum-deep hover:shadow-soft disabled:cursor-not-allowed disabled:opacity-50; }
+  .btn-outline { @apply inline-flex items-center justify-center gap-2 rounded-md border border-plum/35 bg-white/60 px-6 py-3 font-body font-bold text-plum transition duration-300 hover:border-plum hover:bg-plum hover:text-white; }
+  .container-x { @apply mx-auto w-full max-w-[1180px] px-3 sm:px-5 lg:px-7; }
+  .section-kicker { @apply text-[10px] font-bold uppercase tracking-[.28em] text-plum; }
+  .section-title { @apply font-heading text-3xl font-semibold tracking-tight text-charcoal sm:text-4xl; }
+  .icon-button { @apply relative inline-flex h-10 w-10 items-center justify-center rounded-full text-charcoal transition hover:bg-lavender hover:text-plum; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation: none !important; transition: none !important; } }
+
+/* CasaLoom collection marquee: continuous motion, pauses on hover/focus. */
+@keyframes casaloom-collection-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-25%); }
+}
+.category-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: casaloom-collection-marquee 18s linear infinite;
+  will-change: transform;
+}
+.category-marquee-group {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: flex-start;
+  gap: clamp(12px, 1.2vw, 18px);
+  padding-right: clamp(12px, 1.2vw, 18px);
+}
+.category-marquee:hover .category-marquee-track,
+.category-marquee:focus-within .category-marquee-track {
+  animation-play-state: paused;
+}
+@media (max-width: 640px) {
+  .category-marquee-track { animation-duration: 14s; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .category-marquee-track { animation: none; }
+}
+
+
+/* CasaLoom subtle 3D depth for editorial product and collection cards. */
+[data-3d-card] {
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  will-change: transform;
+}
+[data-3d-card] img {
+  transform: translateZ(10px);
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-3d-card] { transform: none !important; }
+}
+
+
+/* Soft animated editorial image behind the entire CasaLoom storefront. */
+.casaloom-page-shell {
+  isolation: isolate;
+  background: #fff4f1;
+}
+.casaloom-page-backdrop {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.16;
+  filter: saturate(0.82) blur(1px);
+  will-change: transform;
+}
+@media (max-width: 767px) {
+  .casaloom-page-backdrop {
+    opacity: 0.11;
+    background-position: 58% center;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .casaloom-page-backdrop {
+    transform: none !important;
+  }
+}
+
+
+/* Shop All: continuous, slightly faster product marquee. */
+@keyframes casaloom-shop-product-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.casaloom-product-track {
+  display: flex;
+  width: max-content;
+  align-items: stretch;
+  gap: 14px;
+  padding: 0 14px;
+  animation: casaloom-shop-product-marquee 14s linear infinite;
+  will-change: transform;
+}
+.casaloom-product-track.is-static { animation: none; }
+.casaloom-product-marquee:hover .casaloom-product-track,
+.casaloom-product-marquee:focus-within .casaloom-product-track {
+  animation-play-state: paused;
+}
+.casaloom-shop-page {
+  background-size: cover;
+  background-position: center top;
+  background-attachment: fixed;
+}
+.casaloom-shop-hero {
+  background:
+    radial-gradient(circle at 8% 12%, rgba(255,255,255,.8), transparent 28%),
+    radial-gradient(circle at 92% 90%, rgba(248,185,210,.45), transparent 30%),
+    linear-gradient(112deg, rgba(255,225,229,.88), rgba(231,218,248,.86) 52%, rgba(255,231,210,.88));
+}
+@media (max-width: 767px) {
+  .casaloom-product-track { animation-duration: 12s; gap: 10px; padding-inline: 10px; }
+  .casaloom-shop-page { background-attachment: scroll; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .casaloom-product-track { animation: none; }
+}
+
+
+/* Shop All V16: colourful glass toolbar and editorial hero polish. */
+.casaloom-shop-toolbar {
+  background:
+    linear-gradient(115deg, rgba(255,255,255,.96), rgba(255,240,247,.94) 48%, rgba(242,235,255,.94));
+  box-shadow: 0 12px 34px rgba(111, 48, 84, .14), inset 0 1px 0 rgba(255,255,255,.95);
+}
+.casaloom-shop-toolbar input,
+.casaloom-shop-toolbar select {
+  min-height: 42px;
+  border-color: rgba(218, 164, 190, .72);
+  background-color: rgba(255,255,255,.94);
+}
+.casaloom-shop-toolbar input:focus,
+.casaloom-shop-toolbar select:focus {
+  box-shadow: 0 0 0 3px rgba(220, 155, 188, .2);
+}
+.casaloom-shop-hero {
+  background:
+    radial-gradient(ellipse at 50% 8%, rgba(255,255,255,.9), transparent 34%),
+    radial-gradient(circle at 14% 82%, rgba(248,175,203,.48), transparent 32%),
+    radial-gradient(circle at 88% 22%, rgba(190,168,232,.42), transparent 34%),
+    linear-gradient(115deg, rgba(255,224,220,.94), rgba(232,216,249,.94) 50%, rgba(255,230,210,.94));
+}
+@media (max-width: 767px) {
+  .casaloom-shop-toolbar {
+    border-radius: 18px;
+  }
+}
+
+
+/* V18: compact Shop All controls and hero proportions. */
+.casaloom-shop-toolbar {
+  box-shadow: 0 7px 20px rgba(111, 48, 84, .11), inset 0 1px 0 rgba(255,255,255,.95);
+}
+.casaloom-shop-toolbar input,
+.casaloom-shop-toolbar select {
+  min-height: 38px;
+}
+.casaloom-shop-hero {
+  min-height: 0;
+}
+@media (max-width: 767px) {
+  .casaloom-shop-toolbar {
+    position: relative;
+    top: auto;
+  }
+  .casaloom-shop-hero {
+    border-radius: 20px;
+  }
+}
+
+
+/* V19: compact Shop All layout, aligned search icon and static six-column products. */
+.casaloom-shop-toolbar input[type="search"] {
+  padding-left: 2.5rem !important;
+}
+.casaloom-shop-toolbar label {
+  min-width: 0;
+}
+.casaloom-shop-toolbar input,
+.casaloom-shop-toolbar select {
+  width: 100%;
+  min-width: 0;
+}
+.casaloom-shop-hero {
+  min-height: 0;
+}
+
+
+/* CasaLoom V20 — soft-luxury customer profile */
+.casaloom-profile-page {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 680px;
+  padding: 34px 20px 24px;
+  background:
+    radial-gradient(ellipse at 8% 14%, rgba(255,255,255,.95), transparent 30%),
+    radial-gradient(ellipse at 92% 78%, rgba(239,190,211,.55), transparent 34%),
+    radial-gradient(ellipse at 48% 8%, rgba(231,211,244,.7), transparent 38%),
+    linear-gradient(125deg, #fff5f0 0%, #f9e8ef 48%, #f2e9fb 100%);
+}
+.casaloom-profile-page::before,
+.casaloom-profile-page::after {
+  content: "✿";
+  position: absolute;
+  z-index: -1;
+  color: rgba(173,91,130,.12);
+  font-family: Georgia, serif;
+  pointer-events: none;
+}
+.casaloom-profile-page::before {
+  top: 35px;
+  left: -20px;
+  font-size: 180px;
+  transform: rotate(-18deg);
+}
+.casaloom-profile-page::after {
+  right: -12px;
+  bottom: 20px;
+  font-size: 230px;
+  transform: rotate(17deg);
+}
+.casaloom-profile-glow {
+  position: absolute;
+  z-index: -1;
+  border: 1px solid rgba(255,255,255,.7);
+  border-radius: 999px;
+  pointer-events: none;
+}
+.casaloom-profile-glow-one {
+  width: 380px;
+  height: 380px;
+  top: 95px;
+  right: -160px;
+  background: rgba(255,255,255,.16);
+}
+.casaloom-profile-glow-two {
+  width: 260px;
+  height: 260px;
+  bottom: -130px;
+  left: 22%;
+  background: rgba(255,255,255,.18);
+}
+.casaloom-profile-shell {
+  width: min(1120px, 100%);
+  margin: 0 auto;
+}
+.casaloom-profile-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 22px;
+  margin: 0 0 22px;
+}
+.casaloom-profile-kicker {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0 0 5px;
+  color: #a75c7d;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .2em;
+}
+.casaloom-profile-heading h1 {
+  margin: 0;
+  color: #54243f;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: clamp(36px, 4vw, 50px);
+  font-weight: 600;
+  line-height: .98;
+}
+.casaloom-profile-heading h1 em {
+  color: #a95f80;
+  font-weight: 500;
+}
+.casaloom-profile-subtitle {
+  margin: 8px 0 0;
+  color: #856276;
+  font-size: 13px;
+}
+.casaloom-profile-heading-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.casaloom-profile-quick-link {
+  display: inline-flex;
+  min-height: 36px;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 1px solid rgba(183,116,147,.34);
+  border-radius: 999px;
+  background: rgba(255,255,255,.68);
+  padding: 8px 13px;
+  color: #713b5b;
+  font-size: 11px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: .2s ease;
+}
+.casaloom-profile-quick-link:hover {
+  transform: translateY(-2px);
+  border-color: #a85e80;
+  background: #fff;
+  box-shadow: 0 7px 18px rgba(109,48,83,.1);
+}
+.casaloom-profile-layout {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  align-items: stretch;
+  gap: 18px;
+}
+.casaloom-profile-aside {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.casaloom-profile-user-card {
+  position: relative;
+  overflow: hidden;
+  min-height: 240px;
+  border: 1px solid rgba(255,255,255,.58);
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 85% 5%, rgba(255,255,255,.2), transparent 34%),
+    linear-gradient(145deg, #985477 0%, #713452 58%, #54243f 100%);
+  padding: 24px 20px 18px;
+  color: #fffafc;
+  text-align: center;
+  box-shadow: 0 13px 30px rgba(95,42,70,.17), inset 0 1px 0 rgba(255,255,255,.2);
+}
+.casaloom-profile-user-card::after {
+  content: "✿";
+  position: absolute;
+  right: -12px;
+  bottom: -35px;
+  color: rgba(255,255,255,.09);
+  font-size: 115px;
+  pointer-events: none;
+}
+.casaloom-profile-avatar {
+  display: flex;
+  width: 68px;
+  height: 68px;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 10px;
+  border: 3px solid rgba(255,255,255,.78);
+  border-radius: 50%;
+  background: linear-gradient(145deg, #fff9f6, #f6dce7);
+  color: #713452;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 25px;
+  font-weight: 700;
+  box-shadow: 0 5px 18px rgba(41,12,29,.16);
+}
+.casaloom-profile-member-tag {
+  color: #f5dbe6;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: .19em;
+}
+.casaloom-profile-user-card h2 {
+  position: relative;
+  z-index: 1;
+  margin: 5px 0 2px;
+  color: white;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 25px;
+  font-weight: 600;
+}
+.casaloom-profile-user-card > p {
+  position: relative;
+  z-index: 1;
+  overflow-wrap: anywhere;
+  margin: 0;
+  color: rgba(255,255,255,.83);
+  font-size: 10px;
+}
+.casaloom-profile-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 15px 4px 12px;
+  color: #f2c9d9;
+}
+.casaloom-profile-divider::before,
+.casaloom-profile-divider::after {
+  height: 1px;
+  flex: 1;
+  background: rgba(255,255,255,.28);
+  content: "";
+}
+.casaloom-profile-divider span { font-size: 12px; }
+.casaloom-profile-aside-note {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: rgba(255,255,255,.88);
+  font-size: 10px;
+  line-height: 1.45;
+}
+.casaloom-profile-note-icon {
+  display: inline-flex;
+  width: 27px;
+  height: 27px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255,255,255,.28);
+  border-radius: 50%;
+  color: #ffe4ef;
+}
+.casaloom-profile-side-links {
+  display: grid;
+  gap: 7px;
+  border: 1px solid rgba(211,164,187,.34);
+  border-radius: 17px;
+  background: rgba(255,255,255,.66);
+  padding: 10px;
+  box-shadow: 0 8px 22px rgba(104,53,81,.06);
+}
+.casaloom-profile-side-links a,
+.casaloom-profile-side-links button {
+  display: flex;
+  min-height: 38px;
+  align-items: center;
+  gap: 9px;
+  border: 1px solid transparent;
+  border-radius: 11px;
+  background: transparent;
+  padding: 8px 10px;
+  color: #713b5b;
+  font-size: 11px;
+  font-weight: 700;
+  text-align: left;
+  text-decoration: none;
+  transition: .2s ease;
+}
+.casaloom-profile-side-links a:hover,
+.casaloom-profile-side-links button:hover {
+  border-color: rgba(207,142,171,.3);
+  background: linear-gradient(100deg, #fff0f4, #f7edff);
+}
+.casaloom-profile-link-arrow {
+  margin-left: auto;
+  color: #b66c8d;
+  font-size: 15px;
+}
+.casaloom-profile-details-card {
+  min-width: 0;
+  border: 1px solid rgba(214,164,187,.48);
+  border-radius: 22px;
+  background: linear-gradient(145deg, rgba(255,255,255,.94), rgba(255,247,249,.91));
+  padding: 23px 25px 24px;
+  box-shadow: 0 13px 32px rgba(105,51,81,.09), inset 0 1px 0 #fff;
+  backdrop-filter: blur(12px);
+}
+.casaloom-profile-card-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+.casaloom-profile-card-title {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 12px;
+}
+.casaloom-profile-title-icon {
+  display: flex;
+  width: 43px;
+  height: 43px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #f0d3df;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #fff, #f9dfe9);
+  color: #8c496b;
+}
+.casaloom-profile-card-eyebrow {
+  margin: 0 0 2px;
+  color: #b16c89;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: .18em;
+}
+.casaloom-profile-card-title h2 {
+  margin: 0;
+  color: #54243f;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.05;
+}
+.casaloom-profile-card-title p:last-child {
+  margin: 4px 0 0;
+  color: #8b6b7d;
+  font-size: 11px;
+}
+.casaloom-profile-edit-button,
+.casaloom-profile-cancel-button {
+  display: inline-flex;
+  min-height: 37px;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border-radius: 10px;
+  padding: 9px 14px;
+  font-size: 11px;
+  font-weight: 800;
+  transition: .2s ease;
+}
+.casaloom-profile-edit-button {
+  border: 1px solid #713b5b;
+  background: linear-gradient(110deg, #874969, #672f50);
+  color: white;
+  box-shadow: 0 5px 12px rgba(104,47,79,.13);
+}
+.casaloom-profile-edit-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 16px rgba(104,47,79,.2);
+}
+.casaloom-profile-edit-button:disabled,
+.casaloom-profile-cancel-button:disabled {
+  cursor: not-allowed;
+  opacity: .55;
+}
+.casaloom-profile-cancel-button {
+  border: 1px solid #e4c6d4;
+  background: #fff;
+  color: #74415e;
+}
+.casaloom-profile-edit-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+.casaloom-profile-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 11px 13px;
+}
+.casaloom-profile-field {
+  display: flex;
+  min-width: 0;
+  min-height: 53px;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid #efd4df;
+  border-radius: 14px;
+  background: linear-gradient(100deg, rgba(255,240,244,.92), rgba(250,239,250,.82));
+  padding: 7px 11px;
+  transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
+}
+.casaloom-profile-field:hover {
+  border-color: #dba9bf;
+  box-shadow: 0 4px 12px rgba(137,71,105,.06);
+}
+.casaloom-profile-field.is-wide { grid-column: 1 / -1; }
+.casaloom-profile-field-icon {
+  display: flex;
+  width: 31px;
+  height: 31px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(225,183,201,.55);
+  border-radius: 50%;
+  background: rgba(255,255,255,.8);
+  color: #9b5777;
+}
+.casaloom-profile-field-content {
+  display: grid;
+  min-width: 0;
+  flex: 1;
+  gap: 2px;
+}
+.casaloom-profile-field-label {
+  color: #93647b;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .025em;
+}
+.casaloom-profile-field-value {
+  overflow: hidden;
+  color: #54243f;
+  font-size: 12px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.casaloom-profile-field input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  padding: 1px 0;
+  color: #54243f;
+  font-size: 12px;
+  font-weight: 600;
+}
+.casaloom-profile-field:focus-within {
+  border-color: #bd7898;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(205,143,171,.13);
+}
+.casaloom-profile-field input::placeholder { color: #bd9bab; font-weight: 400; }
+.casaloom-profile-message {
+  margin: 14px 0 0;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 11px;
+}
+.casaloom-profile-message.is-success { background: #edf7ee; color: #28643a; }
+.casaloom-profile-message.is-error { background: #fff0f0; color: #a12f3a; }
+.casaloom-profile-mobile-actions { display: none; }
+.casaloom-profile-footer-note {
+  margin: 18px 0 0;
+  color: #a4778d;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 14px;
+  font-style: italic;
+  text-align: center;
+}
+.casaloom-profile-footer-note span { color: #b96d8f; }
+.casaloom-profile-loading {
+  display: grid;
+  min-height: 420px;
+  align-content: center;
+  justify-items: center;
+  gap: 10px;
+  background: linear-gradient(130deg, #fff5f0, #f5eafa);
+  color: #78435f;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 20px;
+}
+.casaloom-profile-loading-mark {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  border-radius: 50%;
+  background: #f4dce7;
+  color: #874969;
+}
+@media (max-width: 900px) {
+  .casaloom-profile-heading { align-items: flex-start; flex-direction: column; }
+  .casaloom-profile-heading-actions { justify-content: flex-start; }
+  .casaloom-profile-layout { grid-template-columns: 220px minmax(0, 1fr); gap: 13px; }
+  .casaloom-profile-details-card { padding: 19px; }
+  .casaloom-profile-fields { gap: 9px; }
+}
+@media (max-width: 680px) {
+  .casaloom-profile-page { min-height: 0; padding: 24px 13px 22px; }
+  .casaloom-profile-heading { gap: 14px; margin-bottom: 16px; }
+  .casaloom-profile-heading h1 { font-size: 39px; }
+  .casaloom-profile-subtitle { max-width: 290px; font-size: 12px; }
+  .casaloom-profile-heading-actions { display: grid; width: 100%; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+  .casaloom-profile-quick-link { min-width: 0; gap: 5px; padding: 8px 5px; font-size: 9px; }
+  .casaloom-profile-layout { grid-template-columns: 1fr; }
+  .casaloom-profile-user-card { min-height: 0; padding: 17px 15px 14px; }
+  .casaloom-profile-avatar { width: 56px; height: 56px; font-size: 21px; }
+  .casaloom-profile-user-card h2 { font-size: 22px; }
+  .casaloom-profile-divider { margin: 10px 4px; }
+  .casaloom-profile-side-links { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; padding: 7px; }
+  .casaloom-profile-side-links a,
+  .casaloom-profile-side-links button { justify-content: center; gap: 5px; padding: 8px 4px; font-size: 9px; }
+  .casaloom-profile-link-arrow { display: none; }
+  .casaloom-profile-details-card { padding: 16px 13px; border-radius: 17px; }
+  .casaloom-profile-card-heading { align-items: flex-start; margin-bottom: 14px; }
+  .casaloom-profile-card-title { gap: 8px; }
+  .casaloom-profile-title-icon { width: 36px; height: 36px; }
+  .casaloom-profile-card-title h2 { font-size: 22px; }
+  .casaloom-profile-card-title p:last-child { font-size: 10px; }
+  .casaloom-profile-card-eyebrow { font-size: 7px; }
+  .casaloom-profile-card-heading > .casaloom-profile-edit-button { display: none; }
+  .casaloom-profile-edit-actions { display: none; }
+  .casaloom-profile-fields { grid-template-columns: 1fr; gap: 8px; }
+  .casaloom-profile-field.is-wide { grid-column: auto; }
+  .casaloom-profile-field { min-height: 51px; }
+  .casaloom-profile-mobile-actions { display: flex; gap: 8px; margin-top: 14px; }
+  .casaloom-profile-mobile-actions > * { flex: 1; }
+  .casaloom-profile-footer-note { margin-top: 13px; }
+}
+
+/* CasaLoom My Orders — reference-matched blush/plum order dashboard */
+.casaloom-orders-page {
+  position: relative;
+  isolation: isolate;
+  color: #54223f;
+  background:
+    linear-gradient(90deg, rgba(255,239,244,.10), rgba(255,239,244,.18)),
+    url("./assets/casaloom-shop-floral-bg.jpg") center top / cover no-repeat,
+    linear-gradient(135deg, #fff0ed 0%, #f9e5f1 48%, #f7e5f5 100%);
+  min-height: calc(100vh - 110px);
+}
+.casaloom-orders-page::before,
+.casaloom-orders-page::after {
+  content: "✿";
+  position: absolute;
+  z-index: -1;
+  color: rgba(191, 91, 137, .20);
+  font-family: Georgia, serif;
+  pointer-events: none;
+  line-height: 1;
+}
+.casaloom-orders-page::before { content: ""; top: 0; left: 0; width: 100%; height: 100%; }
+.casaloom-orders-page::after { content: none; }
+.casaloom-orders-shell { width: min(1420px, calc(100% - 48px)); margin: 0 auto; padding: 28px 0 64px; }
+.casaloom-orders-heading { min-height: 126px; display: flex; align-items: center; justify-content: space-between; gap: 24px; border-bottom: 1px solid rgba(177, 91, 131, .22); padding: 4px 36px 22px; position: relative; }
+.casaloom-orders-eyebrow { color: #9d4770; font-size: 13px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+.casaloom-orders-heading h1 { margin-top: 4px; color: #6c244c; font-family: Georgia, 'Times New Roman', serif; font-size: clamp(34px, 4vw, 48px); line-height: 1.1; font-weight: 600; }
+.casaloom-orders-subtitle { margin-top: 10px; color: #744d62; font-size: 16px; }
+.casaloom-orders-heading-art { display: flex; align-items: end; justify-content: center; gap: 16px; min-width: 280px; height: 108px; padding: 8px 22px; color: #9c3d6c; background: radial-gradient(ellipse, rgba(255,255,255,.6), rgba(255,255,255,0)); }
+.casaloom-orders-art-flower { align-self: center; color: #c9799b; font-size: 54px; }
+.casaloom-orders-gift { display: grid; place-items: center; width: 76px; height: 70px; border: 2px solid #df9bb6; border-radius: 12px; color: #a23c70; background: linear-gradient(145deg, #fff8f8, #f7c8dc); box-shadow: 0 9px 18px rgba(131, 43, 89, .12); }
+.casaloom-orders-art-mug { display: grid; place-items: center; width: 58px; height: 48px; border: 2px solid #d78eaa; border-radius: 9px 9px 16px 16px; color: #bd5b87; background: #fff4f5; font-size: 30px; box-shadow: 0 8px 16px rgba(131, 43, 89, .1); }
+.casaloom-order-filters { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; padding: 18px 8px 22px; }
+.casaloom-order-filters button { display: inline-flex; min-width: 190px; align-items: center; justify-content: center; gap: 10px; padding: 12px 20px; border: 1px solid rgba(204, 119, 157, .35); border-radius: 999px; color: #632440; background: rgba(255,255,255,.62); box-shadow: 0 3px 8px rgba(119, 50, 84, .06); font-size: 14px; font-weight: 700; transition: .2s ease; }
+.casaloom-order-filters button:hover { border-color: #b04c7a; transform: translateY(-1px); }
+.casaloom-order-filters button.active { border-color: #8e2860; color: white; background: linear-gradient(110deg, #9c2869, #70234f); box-shadow: 0 8px 18px rgba(116, 34, 80, .2); }
+.casaloom-order-list { display: grid; gap: 16px; }
+.casaloom-order-card { overflow: hidden; border: 1px solid rgba(208, 130, 164, .38); border-radius: 24px; padding: 18px 20px 14px; background: linear-gradient(110deg, rgba(255,255,255,.94), rgba(255,248,250,.91)); box-shadow: 0 9px 22px rgba(113, 45, 82, .10), inset 0 1px 0 rgba(255,255,255,.9); }
+.casaloom-order-card-main { display: grid; grid-template-columns: 132px minmax(230px, 1.15fr) minmax(330px, 1.65fr) 150px; align-items: center; gap: 22px; }
+.casaloom-order-product-image { width: 132px !important; height: 132px !important; border: 1px solid rgba(206, 132, 164, .45) !important; border-radius: 16px; object-fit: cover; background: #f9e5ec; }
+.casaloom-order-info { min-width: 0; }
+.casaloom-order-date { display: flex; align-items: center; gap: 7px; color: #98617a; font-size: 13px; }
+.casaloom-order-number-row { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+.casaloom-order-number-row h2 { overflow-wrap: anywhere; color: #642044; font-family: Georgia, 'Times New Roman', serif; font-size: 19px; font-weight: 700; }
+.casaloom-order-number-row button { display: inline-grid; width: 28px; height: 28px; flex: 0 0 auto; place-items: center; border-radius: 7px; color: #8f3c66; }
+.casaloom-order-number-row button:hover { background: #f9e5ef; }
+.casaloom-order-products { display: grid; gap: 3px; margin-top: 12px; color: #51213d; font-size: 14px; }
+.casaloom-order-total { display: block; margin-top: 12px; color: #642044; font-size: 18px; }
+.casaloom-order-progress-wrap { min-width: 0; padding: 0 4px; }
+.casaloom-order-progress { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); position: relative; }
+.casaloom-order-progress::before { content: ""; position: absolute; top: 17px; left: 12.5%; right: 12.5%; border-top: 2px dashed rgba(151, 128, 139, .34); }
+.casaloom-order-progress li { position: relative; z-index: 1; display: flex; min-width: 0; flex-direction: column; align-items: center; gap: 8px; color: #92828a; text-align: center; }
+.casaloom-order-progress-icon { display: grid; width: 38px; height: 38px; place-items: center; border: 2px solid #c7b9c0; border-radius: 50%; color: #998a91; background: #fffafa; transition: .2s ease; }
+.casaloom-order-progress li.reached .casaloom-order-progress-icon { border-color: #92245f; color: white; background: #92245f; }
+.casaloom-order-progress li.current .casaloom-order-progress-icon { outline: 5px solid rgba(207, 105, 155, .16); box-shadow: 0 0 0 2px #d47ba2; }
+.casaloom-order-progress-label { font-size: 12px; line-height: 1.25; white-space: nowrap; }
+.casaloom-order-progress li.reached .casaloom-order-progress-label { color: #672344; font-weight: 700; }
+.casaloom-order-progress li.current .casaloom-order-progress-label { color: #8f245e; }
+.casaloom-order-terminal { border: 1px solid #e5a0b1; border-radius: 999px; padding: 12px; color: #9c294b; background: #fff0f2; text-align: center; font-weight: 700; }
+.casaloom-order-actions { display: flex; flex-direction: column; align-items: stretch; gap: 8px; }
+.casaloom-order-status { display: inline-flex; min-height: 34px; align-items: center; justify-content: center; gap: 7px; border-radius: 999px; padding: 7px 12px; color: #8c2457; background: #fde9f0; font-size: 13px; font-weight: 700; text-align: center; }
+.casaloom-order-status.status-delivered { color: #32704c; background: #e8f5eb; }
+.casaloom-order-status.status-cancelled, .casaloom-order-status.status-returned { color: #9c294b; background: #fff0f2; }
+.casaloom-order-track, .casaloom-order-details { display: flex; min-height: 38px; align-items: center; justify-content: center; gap: 8px; border: 1px solid #8d2b60; border-radius: 12px; padding: 8px 10px; color: #fff; background: linear-gradient(110deg, #9e2d6d, #70234f); font-size: 13px; font-weight: 700; transition: .2s ease; }
+.casaloom-order-track:hover { filter: brightness(1.08); transform: translateY(-1px); }
+.casaloom-order-details { color: #74254d; background: rgba(255,255,255,.82); }
+.casaloom-order-details:hover { background: #fff0f5; }
+.casaloom-order-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 0; margin-top: 16px; border-radius: 14px; padding: 12px 18px; color: #682343; background: linear-gradient(90deg, #fdebf2, #fff0f4); }
+.casaloom-order-meta > span { display: flex; min-height: 26px; align-items: center; gap: 10px; padding: 0 28px; border-right: 1px solid rgba(191, 104, 145, .36); font-size: 13px; }
+.casaloom-order-meta > span:first-child { padding-left: 8px; }
+.casaloom-order-meta > span:last-child { border-right: 0; }
+.casaloom-order-meta b { font-weight: 700; }
+.casaloom-order-inline-note { margin-top: 12px; border-radius: 10px; padding: 10px 13px; color: #71405a; background: #fff2f5; font-size: 13px; }
+.casaloom-order-inline-note.cancelled { color: #922b4d; background: #fff0f1; }
+.casaloom-order-payment-choice { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 12px; color: #642044; font-size: 13px; }
+.casaloom-order-payment-choice p { width: 100%; }
+.casaloom-order-payment-choice button, .casaloom-order-feedback > button { border: 1px solid #8d2b60; border-radius: 9px; padding: 8px 14px; color: white; background: #82305c; font-size: 13px; font-weight: 700; }
+.casaloom-order-payment-choice button + button { color: #74254d; background: white; }
+.casaloom-order-feedback { display: grid; gap: 8px; margin-top: 14px; border-top: 1px solid #f0d4e0; padding-top: 13px; color: #642044; font-size: 13px; }
+.casaloom-order-stars { display: flex; gap: 5px; }
+.casaloom-order-stars button { color: #d7b9c7; font-size: 25px; line-height: 1; }
+.casaloom-order-stars button.selected { color: #b85a86; }
+.casaloom-order-feedback textarea { width: 100%; max-width: 560px; border: 1px solid #e7c3d3; border-radius: 10px; padding: 9px 11px; color: #54223f; background: #fffafa; }
+.casaloom-order-feedback > button { justify-self: start; }
+.casaloom-order-thanks { margin-top: 12px; color: #38724f; font-size: 13px; font-weight: 700; }
+.casaloom-orders-error { margin: 10px 0; border: 1px solid #e5a6b5; border-radius: 12px; padding: 12px 15px; color: #8d2447; background: #fff0f2; }
+.casaloom-orders-empty { display: grid; min-height: 230px; place-content: center; justify-items: center; gap: 12px; border: 1px solid rgba(208,130,164,.4); border-radius: 22px; color: #773354; background: rgba(255,255,255,.76); text-align: center; }
+.casaloom-orders-empty h2 { font-family: Georgia, 'Times New Roman', serif; font-size: 24px; }
+.casaloom-orders-empty p { color: #856275; font-size: 14px; }
+.casaloom-orders-empty a { border-radius: 999px; padding: 10px 18px; color: white; background: #842c5e; font-weight: 700; }
+@media (max-width: 1100px) {
+  .casaloom-order-card-main { grid-template-columns: 112px minmax(180px, 1fr) minmax(290px, 1.5fr); }
+  .casaloom-order-product-image { width: 112px !important; height: 112px !important; }
+  .casaloom-order-actions { grid-column: 2 / -1; flex-direction: row; flex-wrap: wrap; align-items: center; }
+  .casaloom-order-actions > * { flex: 1 1 130px; }
+}
+@media (max-width: 720px) {
+  .casaloom-orders-shell { width: min(100% - 24px, 560px); padding: 18px 0 40px; }
+  .casaloom-orders-heading { min-height: 0; padding: 8px 4px 18px; }
+  .casaloom-orders-heading-art { min-width: 0; width: 100px; height: 76px; gap: 5px; padding: 4px; }
+  .casaloom-orders-art-flower { font-size: 28px; }
+  .casaloom-orders-gift { width: 45px; height: 44px; }
+  .casaloom-orders-gift svg { width: 27px; }
+  .casaloom-orders-art-mug { display: none; }
+  .casaloom-orders-subtitle { max-width: 270px; font-size: 13px; }
+  .casaloom-order-filters { flex-wrap: nowrap; overflow-x: auto; gap: 8px; padding: 14px 0; }
+  .casaloom-order-filters button { min-width: max-content; padding: 10px 14px; font-size: 12px; }
+  .casaloom-order-card { border-radius: 18px; padding: 13px; }
+  .casaloom-order-card-main { grid-template-columns: 82px minmax(0, 1fr); gap: 12px; }
+  .casaloom-order-product-image { width: 82px !important; height: 82px !important; border-radius: 12px; }
+  .casaloom-order-date { font-size: 11px; }
+  .casaloom-order-number-row h2 { font-size: 15px; }
+  .casaloom-order-products { margin-top: 7px; font-size: 12px; }
+  .casaloom-order-total { margin-top: 6px; font-size: 16px; }
+  .casaloom-order-progress-wrap { grid-column: 1 / -1; padding: 10px 0 3px; }
+  .casaloom-order-progress-label { font-size: 10px; white-space: normal; }
+  .casaloom-order-progress-icon { width: 32px; height: 32px; }
+  .casaloom-order-progress::before { top: 15px; }
+  .casaloom-order-actions { grid-column: 1 / -1; flex-direction: row; }
+  .casaloom-order-actions > * { flex: 1 1 0; }
+  .casaloom-order-meta { display: grid; gap: 9px; margin-top: 12px; padding: 11px 12px; }
+  .casaloom-order-meta > span, .casaloom-order-meta > span:first-child { border: 0; padding: 0; font-size: 12px; }
+}
+
+
+/* V22 — compact My Orders layout: retain the reference design, reduce scale. */
+.casaloom-orders-shell {
+  width: min(1320px, calc(100% - 40px));
+  padding: 18px 0 40px;
+}
+.casaloom-orders-heading {
+  min-height: 94px;
+  gap: 16px;
+  padding: 2px 22px 14px;
+}
+.casaloom-orders-eyebrow { font-size: 11px; }
+.casaloom-orders-heading h1 {
+  font-size: clamp(30px, 3vw, 40px);
+  line-height: 1.04;
+}
+.casaloom-orders-subtitle { margin-top: 6px; font-size: 14px; }
+.casaloom-orders-heading-art {
+  min-width: 220px;
+  height: 78px;
+  gap: 10px;
+  padding: 5px 12px;
+}
+.casaloom-orders-art-flower { font-size: 40px; }
+.casaloom-orders-gift { width: 58px; height: 54px; }
+.casaloom-orders-gift svg { width: 34px; height: 34px; }
+.casaloom-orders-art-mug { width: 44px; height: 38px; font-size: 23px; }
+
+.casaloom-order-filters {
+  gap: 12px;
+  padding: 13px 6px 16px;
+}
+.casaloom-order-filters button {
+  min-width: 158px;
+  gap: 8px;
+  padding: 9px 15px;
+  font-size: 12px;
+}
+.casaloom-order-filters button svg { width: 17px; height: 17px; }
+
+.casaloom-order-list { gap: 12px; }
+.casaloom-order-card {
+  border-radius: 18px;
+  padding: 13px 15px 11px;
+}
+.casaloom-order-card-main {
+  grid-template-columns: 104px minmax(190px, 1.05fr) minmax(280px, 1.55fr) 132px;
+  gap: 15px;
+}
+.casaloom-order-product-image {
+  width: 104px !important;
+  height: 104px !important;
+  border-radius: 13px;
+}
+.casaloom-order-date { gap: 5px; font-size: 11px; }
+.casaloom-order-date svg { width: 13px; height: 13px; }
+.casaloom-order-number-row { gap: 5px; margin-top: 4px; }
+.casaloom-order-number-row h2 { font-size: 16px; }
+.casaloom-order-number-row button { width: 24px; height: 24px; }
+.casaloom-order-products { gap: 2px; margin-top: 8px; font-size: 12px; }
+.casaloom-order-total { margin-top: 8px; font-size: 16px; }
+.casaloom-order-progress-wrap { padding: 0 2px; }
+.casaloom-order-progress::before { top: 14px; }
+.casaloom-order-progress li { gap: 6px; }
+.casaloom-order-progress-icon { width: 31px; height: 31px; }
+.casaloom-order-progress-icon svg { width: 15px; height: 15px; }
+.casaloom-order-progress-label { font-size: 10px; }
+.casaloom-order-actions { gap: 6px; }
+.casaloom-order-status {
+  min-height: 29px;
+  gap: 5px;
+  padding: 5px 9px;
+  font-size: 11px;
+}
+.casaloom-order-track, .casaloom-order-details {
+  min-height: 32px;
+  gap: 6px;
+  border-radius: 9px;
+  padding: 6px 8px;
+  font-size: 11px;
+}
+.casaloom-order-track svg, .casaloom-order-details svg { width: 14px; height: 14px; }
+.casaloom-order-meta {
+  margin-top: 11px;
+  border-radius: 11px;
+  padding: 8px 12px;
+}
+.casaloom-order-meta > span {
+  min-height: 22px;
+  gap: 7px;
+  padding: 0 18px;
+  font-size: 11px;
+}
+.casaloom-order-meta svg { width: 16px; height: 16px; }
+.casaloom-order-inline-note { margin-top: 9px; padding: 8px 10px; font-size: 11px; }
+.casaloom-order-payment-choice, .casaloom-order-feedback { margin-top: 9px; font-size: 11px; }
+
+@media (max-width: 1100px) {
+  .casaloom-orders-shell { width: min(100% - 32px, 980px); }
+  .casaloom-order-card-main {
+    grid-template-columns: 92px minmax(170px, 1fr) minmax(250px, 1.4fr);
+    gap: 12px;
+  }
+  .casaloom-order-product-image { width: 92px !important; height: 92px !important; }
+}
+@media (max-width: 720px) {
+  .casaloom-orders-shell { width: min(100% - 24px, 560px); padding: 14px 0 30px; }
+  .casaloom-orders-heading { min-height: 0; padding: 6px 2px 12px; }
+  .casaloom-orders-heading h1 { font-size: 30px; }
+  .casaloom-orders-heading-art { width: 82px; height: 62px; }
+  .casaloom-order-filters { padding: 10px 0 12px; }
+  .casaloom-order-filters button { padding: 8px 11px; }
+  .casaloom-order-card { padding: 11px; border-radius: 15px; }
+  .casaloom-order-card-main { grid-template-columns: 72px minmax(0, 1fr); gap: 10px; }
+  .casaloom-order-product-image { width: 72px !important; height: 72px !important; }
+  .casaloom-order-number-row h2 { font-size: 14px; }
+  .casaloom-order-progress-wrap { padding: 8px 0 2px; }
+  .casaloom-order-progress-icon { width: 28px; height: 28px; }
+  .casaloom-order-progress::before { top: 13px; }
+  .casaloom-order-progress-label { font-size: 9px; }
+  .casaloom-order-meta { margin-top: 9px; padding: 9px 10px; }
+}
+
+
+/* V23 — extra-compact My Orders: preserve the same artwork and visual theme. */
+.casaloom-orders-page .casaloom-orders-shell {
+  width: min(1160px, calc(100% - 48px));
+  padding-top: 12px;
+  padding-bottom: 28px;
+}
+.casaloom-orders-page .casaloom-orders-heading {
+  min-height: 78px;
+  padding: 0 14px 10px;
+  gap: 10px;
+}
+.casaloom-orders-page .casaloom-orders-eyebrow { font-size: 9px; letter-spacing: .16em; }
+.casaloom-orders-page .casaloom-orders-heading h1 {
+  font-size: clamp(26px, 2.5vw, 34px);
+  line-height: 1;
+}
+.casaloom-orders-page .casaloom-orders-subtitle { margin-top: 4px; font-size: 12px; }
+.casaloom-orders-page .casaloom-orders-heading-art {
+  min-width: 180px;
+  height: 62px;
+  transform: scale(.9);
+  transform-origin: right center;
+}
+.casaloom-orders-page .casaloom-orders-art-flower { font-size: 32px; }
+.casaloom-orders-page .casaloom-orders-gift { width: 46px; height: 44px; }
+.casaloom-orders-page .casaloom-orders-gift svg { width: 28px; height: 28px; }
+.casaloom-orders-page .casaloom-orders-art-mug { width: 36px; height: 32px; font-size: 18px; }
+
+.casaloom-orders-page .casaloom-order-filters {
+  gap: 9px;
+  padding: 9px 4px 12px;
+}
+.casaloom-orders-page .casaloom-order-filters button {
+  min-width: 135px;
+  padding: 7px 12px;
+  gap: 6px;
+  font-size: 11px;
+  line-height: 1.2;
+}
+.casaloom-orders-page .casaloom-order-filters button svg { width: 15px; height: 15px; }
+
+.casaloom-orders-page .casaloom-order-list { gap: 9px; }
+.casaloom-orders-page .casaloom-order-card {
+  border-radius: 15px;
+  padding: 10px 12px 9px;
+}
+.casaloom-orders-page .casaloom-order-card-main {
+  grid-template-columns: 82px minmax(160px, .95fr) minmax(240px, 1.45fr) 112px;
+  gap: 11px;
+}
+.casaloom-orders-page .casaloom-order-product-image {
+  width: 82px !important;
+  height: 82px !important;
+  border-radius: 11px;
+}
+.casaloom-orders-page .casaloom-order-date { font-size: 10px; gap: 4px; }
+.casaloom-orders-page .casaloom-order-number-row { margin-top: 2px; }
+.casaloom-orders-page .casaloom-order-number-row h2 { font-size: 14px; line-height: 1.2; }
+.casaloom-orders-page .casaloom-order-number-row button { width: 21px; height: 21px; }
+.casaloom-orders-page .casaloom-order-products { margin-top: 6px; font-size: 11px; }
+.casaloom-orders-page .casaloom-order-total { margin-top: 5px; font-size: 14px; }
+.casaloom-orders-page .casaloom-order-progress-icon { width: 27px; height: 27px; }
+.casaloom-orders-page .casaloom-order-progress-icon svg { width: 13px; height: 13px; }
+.casaloom-orders-page .casaloom-order-progress::before { top: 12px; }
+.casaloom-orders-page .casaloom-order-progress-label { font-size: 9px; }
+.casaloom-orders-page .casaloom-order-progress li { gap: 4px; }
+.casaloom-orders-page .casaloom-order-actions { gap: 5px; }
+.casaloom-orders-page .casaloom-order-status {
+  min-height: 25px;
+  padding: 4px 7px;
+  font-size: 10px;
+}
+.casaloom-orders-page .casaloom-order-track,
+.casaloom-orders-page .casaloom-order-details {
+  min-height: 28px;
+  padding: 5px 7px;
+  gap: 5px;
+  font-size: 10px;
+}
+.casaloom-orders-page .casaloom-order-track svg,
+.casaloom-orders-page .casaloom-order-details svg { width: 12px; height: 12px; }
+.casaloom-orders-page .casaloom-order-meta {
+  margin-top: 8px;
+  padding: 6px 9px;
+  border-radius: 9px;
+}
+.casaloom-orders-page .casaloom-order-meta > span {
+  min-height: 19px;
+  padding: 0 13px;
+  gap: 5px;
+  font-size: 10px;
+}
+.casaloom-orders-page .casaloom-order-meta svg { width: 14px; height: 14px; }
+.casaloom-orders-page .casaloom-order-inline-note,
+.casaloom-orders-page .casaloom-order-payment-choice,
+.casaloom-orders-page .casaloom-order-feedback {
+  margin-top: 7px;
+  padding: 6px 8px;
+  font-size: 10px;
+}
+
+@media (max-width: 1100px) {
+  .casaloom-orders-page .casaloom-orders-shell { width: min(100% - 28px, 940px); }
+  .casaloom-orders-page .casaloom-order-card-main {
+    grid-template-columns: 76px minmax(145px, 1fr) minmax(210px, 1.35fr);
+    gap: 9px;
+  }
+  .casaloom-orders-page .casaloom-order-product-image {
+    width: 76px !important; height: 76px !important;
+  }
+}
+@media (max-width: 720px) {
+  .casaloom-orders-page .casaloom-orders-shell { width: calc(100% - 20px); padding-top: 10px; }
+  .casaloom-orders-page .casaloom-orders-heading { min-height: 0; padding: 2px 0 8px; }
+  .casaloom-orders-page .casaloom-orders-heading h1 { font-size: 27px; }
+  .casaloom-orders-page .casaloom-orders-subtitle { font-size: 11px; }
+  .casaloom-orders-page .casaloom-orders-heading-art { min-width: 68px; width: 68px; height: 50px; }
+  .casaloom-orders-page .casaloom-order-filters { gap: 6px; padding: 8px 0 10px; }
+  .casaloom-orders-page .casaloom-order-filters button { min-width: 0; padding: 7px 9px; font-size: 10px; }
+  .casaloom-orders-page .casaloom-order-card { padding: 9px; }
+  .casaloom-orders-page .casaloom-order-card-main { grid-template-columns: 64px minmax(0, 1fr); gap: 8px; }
+  .casaloom-orders-page .casaloom-order-product-image { width: 64px !important; height: 64px !important; }
+  .casaloom-orders-page .casaloom-order-number-row h2 { font-size: 12px; }
+  .casaloom-orders-page .casaloom-order-progress-label { font-size: 8px; }
+  .casaloom-orders-page .casaloom-order-meta { gap: 4px; padding: 7px; }
+  .casaloom-orders-page .casaloom-order-meta > span { padding: 0 5px; font-size: 9px; }
+}
