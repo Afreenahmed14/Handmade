@@ -1085,3 +1085,117 @@
   .casaloom-orders-page .casaloom-order-meta { gap: 4px; padding: 7px; }
   .casaloom-orders-page .casaloom-order-meta > span { padding: 0 5px; font-size: 9px; }
 }
+
+
+/* CasaLoom Admin V27 — compact blush/plum admin system, scoped to admin only. */
+.casaloom-admin {
+  --admin-plum: #713957;
+  --admin-plum-dark: #54243f;
+  --admin-rose: #bd7898;
+  --admin-line: rgba(191, 137, 160, .34);
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse at 8% 5%, rgba(255,255,255,.92), transparent 30%),
+    radial-gradient(ellipse at 92% 28%, rgba(238,203,226,.42), transparent 34%),
+    linear-gradient(135deg, #fff8f4 0%, #fbedf3 52%, #f3edfb 100%);
+}
+.casaloom-admin-header {
+  background: rgba(255, 250, 247, .94);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 3px 18px rgba(91, 36, 69, .06);
+}
+.casaloom-admin-shell { max-width: 1440px; }
+.casaloom-admin-nav { scrollbar-width: thin; }
+.casaloom-admin-nav .admin-nav-link {
+  display: flex; align-items: center; gap: 9px; flex: 0 0 auto;
+  min-height: 34px; padding: 8px 10px; border-radius: 10px;
+  color: #63334f; font-size: 12px; font-weight: 600; line-height: 1.25;
+  white-space: nowrap; transition: background .18s ease, color .18s ease, transform .18s ease;
+}
+.casaloom-admin-nav .admin-nav-link:hover { background: #f7e5ee; color: #4f1e3b; }
+.casaloom-admin-nav .admin-nav-link.is-active {
+  color: #fff; background: linear-gradient(110deg, #783b60, #a94f83);
+  box-shadow: 0 5px 14px rgba(120, 59, 96, .18);
+}
+.casaloom-admin-content { min-height: calc(100vh - 104px); }
+.casaloom-admin-content > section,
+.casaloom-admin-content main > section {
+  margin: 0 !important; min-height: 0 !important; padding: 12px !important;
+  border-radius: 14px; background: transparent !important;
+}
+.casaloom-admin-content h1 { font-size: 25px !important; line-height: 1.12 !important; color: #63304d !important; }
+.casaloom-admin-content h2 { font-size: 16px !important; line-height: 1.25 !important; color: #63304d; }
+.casaloom-admin-content h3 { font-size: 14px !important; color: #63304d; }
+.casaloom-admin-content p { line-height: 1.45; }
+.casaloom-admin-content .text-3xl { font-size: 25px !important; }
+.casaloom-admin-content .text-2xl { font-size: 21px !important; }
+.casaloom-admin-content .text-xl { font-size: 17px !important; }
+.casaloom-admin-content .text-lg { font-size: 15px !important; }
+.casaloom-admin-content .p-8 { padding: 16px !important; }
+.casaloom-admin-content .p-6 { padding: 14px !important; }
+.casaloom-admin-content .p-5 { padding: 12px !important; }
+.casaloom-admin-content .p-4 { padding: 11px !important; }
+.casaloom-admin-content .sm\:p-8 { padding: 14px !important; }
+.casaloom-admin-content .sm\:p-5 { padding: 12px !important; }
+.casaloom-admin-content .mt-8 { margin-top: 18px !important; }
+.casaloom-admin-content .mt-6 { margin-top: 14px !important; }
+.casaloom-admin-content .gap-8 { gap: 16px !important; }
+.casaloom-admin-content .gap-6 { gap: 12px !important; }
+.casaloom-admin-content .gap-4 { gap: 10px !important; }
+.casaloom-admin-content .space-y-6 > :not([hidden]) ~ :not([hidden]) { margin-top: 14px !important; }
+.casaloom-admin-content .space-y-5 > :not([hidden]) ~ :not([hidden]) { margin-top: 12px !important; }
+.casaloom-admin-content .space-y-4 > :not([hidden]) ~ :not([hidden]) { margin-top: 10px !important; }
+.casaloom-admin-content article,
+.casaloom-admin-content .rounded-xl,
+.casaloom-admin-content .rounded-lg {
+  border-radius: 12px;
+}
+.casaloom-admin-content article,
+.casaloom-admin-content section.border,
+.casaloom-admin-content .border-brass\/40.bg-white,
+.casaloom-admin-content .border-brass\/30.bg-white {
+  border-color: var(--admin-line);
+  box-shadow: 0 5px 18px rgba(103, 48, 78, .055);
+}
+.casaloom-admin-content input:not([type=checkbox]):not([type=radio]),
+.casaloom-admin-content select,
+.casaloom-admin-content textarea {
+  min-height: 34px; padding: 7px 9px; border: 1px solid rgba(190, 139, 162, .5);
+  border-radius: 8px; background: rgba(255,255,255,.9); color: #54243f;
+  font-size: 12px; line-height: 1.35; max-width: 100%;
+}
+.casaloom-admin-content input::placeholder,
+.casaloom-admin-content textarea::placeholder { color: #98758a; opacity: 1; }
+.casaloom-admin-content label { color: #65445a; font-size: 12px; }
+.casaloom-admin-content button {
+  min-height: 30px; border-radius: 8px; font-size: 12px; line-height: 1.25;
+  font-weight: 600; white-space: normal; overflow-wrap: anywhere;
+}
+.casaloom-admin-content .btn-primary,
+.casaloom-admin-content button[class*="bg-walnut"],
+.casaloom-admin-content button[class*="bg-plum"],
+.casaloom-admin-content button[class*="bg-[#"] {
+  color: #fff !important; background-color: #713957;
+}
+.casaloom-admin-content .btn-primary { padding: 8px 13px !important; }
+.casaloom-admin-content .btn-outline { padding: 7px 12px !important; color: #63304d !important; border-color: rgba(145, 75, 111, .45); }
+.casaloom-admin-content button:disabled { opacity: .55; cursor: not-allowed; }
+.casaloom-admin-content table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 12px; }
+.casaloom-admin-content th { color: #63304d; background: #f8eaf0; font-size: 11px; font-weight: 700; }
+.casaloom-admin-content td, .casaloom-admin-content th { padding: 8px 9px; border-bottom: 1px solid rgba(191,137,160,.22); vertical-align: middle; }
+.casaloom-admin-content a { overflow-wrap: anywhere; }
+@media (min-width: 1024px) {
+  .casaloom-admin-content > section,
+  .casaloom-admin-content main > section { padding: 14px !important; }
+}
+@media (max-width: 1023px) {
+  .casaloom-admin-shell { gap: 10px; }
+  .casaloom-admin-nav { flex-wrap: nowrap; }
+  .casaloom-admin-content { min-height: 0; }
+}
+@media (max-width: 640px) {
+  .casaloom-admin-content > section,
+  .casaloom-admin-content main > section { padding: 9px !important; }
+  .casaloom-admin-content h1 { font-size: 22px !important; }
+  .casaloom-admin-content .overflow-x-auto { max-width: 100%; }
+}

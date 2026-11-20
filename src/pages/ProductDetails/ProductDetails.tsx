@@ -64,23 +64,23 @@ export default function ProductDetails() {
     finally { setSaving(false); }
   }
 
-  return <section className="container-x py-10 md:py-16">
-    <div className="grid gap-10 md:grid-cols-2">
-      <div className="overflow-hidden rounded-2xl bg-[#f2e9e5]">{product.imageUrl ? <img src={product.imageUrl} alt={product.name} className="aspect-[4/5] w-full object-cover" /> : <ProductArt kind={product.art} className="aspect-[4/5] w-full" />}</div>
-      <div className="self-center">
-        {product.categorySlug && <Link to={`/category/${product.categorySlug}`} className="text-sm text-walnut underline underline-offset-4">{product.category}</Link>}
-        <p className="mt-4 text-xs uppercase tracking-[.22em] text-walnut/70">Made for your home</p>
-        <h1 className="mt-2 font-display text-4xl text-walnut md:text-5xl">{product.name}</h1>
-        <p className="mt-3 text-espresso/70">{product.material}{product.colour ? ` · ${product.colour}` : ""}</p>
-        <div className="mt-5 flex items-baseline gap-3"><span className="text-2xl text-espresso">{formatINR(price)}</span>{product.discountPrice && <span className="text-sm text-espresso/50 line-through">{formatINR(product.price)}</span>}</div>
-        <p className="mt-6 leading-relaxed text-espresso/80">{product.description}</p>
-        <p className="mt-4 text-sm text-walnut/70">{isPurchasable(product) ? stockLabel(product.stock) : "Currently unavailable"}</p>
-        <div className="mt-7 flex flex-wrap gap-3">
-          <button disabled={!isPurchasable(product)} onClick={() => { if (!user) navigate("/login", {state:{from:`/product/${product.slug}`}}); else setShowOrder(true); }} className="btn-primary disabled:opacity-50"><ShoppingBag size={16}/> Order this product</button>
-          <button type="button" aria-pressed={wished} onClick={() => toggleWishlist(product)} className="btn-outline"><Heart size={16} fill={wished ? "#64234e" : "none"}/>{wished ? "Saved" : "Wishlist"}</button>
-          {whatsappUrl && <a href={whatsappUrl} target="_blank" rel="noreferrer" className="btn-outline"><MessageCircle size={16}/> Customization enquiry</a>}
+  return <section className="container-x mx-auto max-w-6xl py-5 md:py-8">
+    <div className="mx-auto grid max-w-5xl items-center gap-5 rounded-2xl border border-[#ead1d9] bg-white/70 p-3 shadow-[0_10px_30px_rgba(100,35,78,0.08)] sm:p-4 md:grid-cols-[minmax(0,380px)_minmax(0,1fr)] md:gap-7 md:p-5">
+      <div className="mx-auto w-full max-w-[340px] overflow-hidden rounded-xl border border-[#ead1d9] bg-[#f2e9e5] shadow-sm">{product.imageUrl ? <img src={product.imageUrl} alt={product.name} className="aspect-[4/5] max-h-[410px] w-full object-cover" /> : <ProductArt kind={product.art} className="aspect-[4/5] max-h-[410px] w-full" />}</div>
+      <div className="self-center px-1 py-2 md:px-2">
+        {product.categorySlug && <Link to={`/category/${product.categorySlug}`} className="text-xs text-walnut underline underline-offset-4">{product.category}</Link>}
+        <p className="mt-2 text-[10px] uppercase tracking-[.2em] text-walnut/70">Made for your home</p>
+        <h1 className="mt-1 font-display text-3xl leading-tight text-walnut md:text-4xl">{product.name}</h1>
+        <p className="mt-2 text-sm text-espresso/70">{product.material}{product.colour ? ` · ${product.colour}` : ""}</p>
+        <div className="mt-3 flex items-baseline gap-2"><span className="text-xl text-espresso">{formatINR(price)}</span>{product.discountPrice && <span className="text-xs text-espresso/50 line-through">{formatINR(product.price)}</span>}</div>
+        <p className="mt-3 max-w-xl text-sm leading-relaxed text-espresso/80">{product.description}</p>
+        <p className="mt-2 text-xs text-walnut/70">{isPurchasable(product) ? stockLabel(product.stock) : "Currently unavailable"}</p>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <button disabled={!isPurchasable(product)} onClick={() => { if (!user) navigate("/login", {state:{from:`/product/${product.slug}`}}); else setShowOrder(true); }} className="btn-primary !px-4 !py-2 !text-sm disabled:opacity-50"><ShoppingBag size={14}/> Order this product</button>
+          <button type="button" aria-pressed={wished} onClick={() => toggleWishlist(product)} className="btn-outline !px-3 !py-2 !text-sm"><Heart size={14} fill={wished ? "#64234e" : "none"}/>{wished ? "Saved" : "Wishlist"}</button>
+          {whatsappUrl && <a href={whatsappUrl} target="_blank" rel="noreferrer" className="btn-outline !px-3 !py-2 !text-sm"><MessageCircle size={14}/> Customization enquiry</a>}
         </div>
-        <p className="mt-4 text-xs leading-relaxed text-espresso/60">Your order is sent to CasaLoom for approval first. Payment options become available only after we accept your request.</p>
+        <p className="mt-3 max-w-xl text-[11px] leading-relaxed text-espresso/60">Your order is sent to CasaLoom for approval first. Payment options become available only after we accept your request.</p>
       </div>
     </div>
     {showOrder && <div className="fixed inset-0 z-50 flex items-end justify-center bg-espresso/50 p-0 sm:items-center sm:p-5" onClick={() => setShowOrder(false)}>
