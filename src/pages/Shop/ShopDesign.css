@@ -65,3 +65,136 @@
 }
 .casaloom-shop-page .section-kicker{color:#a13c75}
 @media(max-width:767px){.casaloom-shop-page{background-attachment:scroll}}
+
+
+/* CasaLoom editorial collection layout */
+.casaloom-shop-categories > div:last-child > button{
+  min-height:112px;
+  border-radius:18px!important;
+  box-shadow:0 8px 22px rgba(91,42,77,.11)!important;
+}
+.casaloom-shop-categories > div:last-child > button[aria-pressed="true"]{
+  outline:2px solid rgba(169,76,121,.34);
+  outline-offset:2px;
+}
+.casaloom-shop-categories > div:last-child > button img{
+  object-position:center;
+}
+.casaloom-shop-products{
+  scroll-margin-top:90px;
+}
+.casaloom-product-showcase{
+  position:relative;
+  isolation:isolate;
+}
+.casaloom-product-showcase::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  pointer-events:none;
+  border-radius:inherit;
+  background:
+    radial-gradient(circle at 2% 100%,rgba(244,175,199,.16),transparent 28%),
+    radial-gradient(circle at 100% 0%,rgba(188,166,231,.16),transparent 30%);
+}
+.casaloom-product-intro{
+  min-height:100%;
+}
+.casaloom-shop-products [data-3d-card]{
+  display:flex;
+  min-width:0;
+  flex-direction:column;
+  overflow:hidden;
+  border:1px solid rgba(226,184,202,.92)!important;
+  border-radius:18px!important;
+  background:linear-gradient(180deg,#fff 0%,#fff9fc 100%)!important;
+  box-shadow:0 8px 22px rgba(104,43,83,.11)!important;
+  transition:transform .3s ease,box-shadow .3s ease,border-color .3s ease;
+}
+.casaloom-shop-products [data-3d-card]:hover{
+  border-color:rgba(185,110,145,.9)!important;
+  box-shadow:0 15px 30px rgba(104,43,83,.17)!important;
+}
+.casaloom-shop-products [data-3d-card] > div:first-child{
+  flex:none;
+  background:#f8dce8!important;
+}
+.casaloom-shop-products [data-3d-card] > div:first-child img{
+  display:block;
+  width:100%;
+  aspect-ratio:1/1;
+  object-fit:cover;
+}
+.casaloom-shop-products [data-3d-card] > div:last-child{
+  display:flex;
+  flex:1;
+  flex-direction:column;
+  gap:3px;
+  padding:12px!important;
+}
+.casaloom-shop-products [data-3d-card] > div:last-child > a:last-child{
+  margin-top:auto;
+  padding-top:9px;
+}
+.casaloom-shop-products [data-3d-card] h3{
+  min-height:2.5rem;
+  font-size:12px!important;
+  line-height:1.45!important;
+}
+.casaloom-shop-products [data-3d-card] p{
+  font-size:11px!important;
+}
+.casaloom-shop-products [data-3d-card] a[href^="/product/"]:last-child{
+  min-height:36px;
+  border:1px solid #a53c75!important;
+  border-radius:999px!important;
+  background:linear-gradient(100deg,#8b245f,#bd397e)!important;
+  font-size:10px!important;
+}
+.casaloom-shop-products [data-3d-card] a[href^="/product/"]:last-child:hover{
+  background:linear-gradient(100deg,#6d174b,#a92b70)!important;
+}
+.casaloom-shop-products [data-3d-card] button[aria-label*="Save"],
+.casaloom-shop-products [data-3d-card] button[aria-label*="Remove"]{
+  width:34px;
+  height:34px;
+  border:1px solid #fff!important;
+  color:#963365!important;
+  box-shadow:0 3px 12px rgba(76,30,61,.15)!important;
+}
+@media(min-width:1024px){
+  .casaloom-product-intro{
+    position:relative;
+  }
+}
+@media(max-width:639px){
+  .casaloom-shop-categories > div:last-child > button{
+    min-height:100px;
+  }
+  .casaloom-shop-products [data-3d-card] > div:last-child{
+    padding:9px!important;
+  }
+  .casaloom-shop-products [data-3d-card] h3{
+    font-size:11px!important;
+  }
+}
+
+/* Compact five-across catalogue and top-aligned editorial panel */
+.casaloom-product-showcase{align-items:start!important;}
+.casaloom-product-intro{align-self:start!important;justify-content:flex-start!important;min-height:0!important;height:fit-content;}
+.casaloom-shop-products [data-3d-card]{border-radius:13px!important;}
+.casaloom-shop-products [data-3d-card] > div:first-child img{aspect-ratio:1/1;object-fit:cover;}
+.casaloom-shop-products [data-3d-card] > div:last-child{padding:8px!important;gap:2px!important;}
+.casaloom-shop-products [data-3d-card] h3{font-size:11px!important;line-height:1.3!important;min-height:2.1rem;}
+.casaloom-shop-products [data-3d-card] p{font-size:10px!important;line-height:1.3!important;}
+.casaloom-shop-products [data-3d-card] a[href^="/product/"]:last-child{min-height:30px!important;padding:5px 4px!important;font-size:9px!important;}
+.casaloom-shop-products [data-3d-card] button[aria-label*="Save"],
+.casaloom-shop-products [data-3d-card] button[aria-label*="Remove"]{width:28px;height:28px;}
+@media(min-width:1280px){
+  .casaloom-shop-products .casaloom-product-showcase{grid-template-columns:205px minmax(0,1fr)!important;}
+  .casaloom-shop-products [aria-label="Product collection"]{grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:9px!important;}
+}
+@media(min-width:1024px) and (max-width:1279px){
+  .casaloom-shop-products [aria-label="Product collection"]{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:9px!important;}
+}

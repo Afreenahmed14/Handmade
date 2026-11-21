@@ -28,27 +28,107 @@ const editorial = {
   styling: "/images/casaloom-editorial/collection-styling.webp",
 };
 
-function CategoryCard({ category, index, products, duplicate = false }: { category: Category; index: number; products: Product[]; duplicate?: boolean }) {
-  const productImage = products.find((product) => product.categoryId === category.id && product.imageUrl)?.imageUrl;
-  const image = category.imageUrl || productImage;
+// function CategoryCard({ category, index, products, duplicate = false }: { category: Category; index: number; products: Product[]; duplicate?: boolean }) {
+//   // const productImage = products.find((product) => product.categoryId === category.id && product.imageUrl)?.imageUrl;
+
+
+//   const productImage = products.find(
+//   (product) =>
+//     product.categoryId === category.id && product.imageUrl
+// )?.imageUrl;
+
+// // Prioritise the newly uploaded product image
+// const image = productImage || category.imageUrl;
+
+
+
+//   const image = category.imageUrl || productImage;
+//   return (
+//     <Link to={`/category/${category.slug}`} tabIndex={duplicate ? -1 : 0} aria-hidden={duplicate ? true : undefined} data-3d-card data-reveal className="group block w-[clamp(140px,13vw,180px)] shrink-0 [transform-style:preserve-3d]">
+//       <div className="relative aspect-square overflow-hidden rounded-t-[42%] rounded-b-xl bg-[#F1E4E2] shadow-[0_10px_24px_rgba(83,42,59,.08)]">
+//         {image ? (
+//           <img src={image} alt={category.name} loading="lazy" className="h-full w-full scale-[1.06] object-cover transition-transform duration-700 ease-out group-hover:scale-100" />
+//         ) : (
+//           <ProductArt kind={category.art} className="h-full w-full scale-[1.06] transition-transform duration-700 ease-out group-hover:scale-100" />
+//         )}
+//         <span className="absolute left-3 top-3 rounded-full border border-white/70 bg-[#FFF9F4]/90 px-3 py-1 text-[9px] font-bold uppercase tracking-[.18em] text-[#743C57]">0{index + 1}</span>
+//         <span className="absolute bottom-3 right-3 grid h-9 w-9 place-items-center rounded-full bg-[#FFF9F4] text-[#743C57] shadow-sm transition group-hover:bg-[#743C57] group-hover:text-white"><ArrowRight size={16} /></span>
+//       </div>
+//       <div className="px-2 pt-3 text-center">
+//         <h3 className="font-heading text-base font-semibold text-[#4B303D] transition group-hover:text-[#8B526A]">{category.name}</h3>
+//         <span className="mt-1 block text-[9px] uppercase tracking-[.2em] text-[#A27C83]">Explore collection</span>
+//       </div>
+//     </Link>
+//   );
+// }
+
+
+
+function CategoryCard({
+  category,
+  index,
+  products,
+  duplicate = false,
+}: {
+  category: Category;
+  index: number;
+  products: Product[];
+  duplicate?: boolean;
+}) {
+  const productImage = products.find(
+    (product) =>
+      product.categoryId === category.id && product.imageUrl
+  )?.imageUrl;
+
+  // Newly uploaded product image takes priority
+  const image = productImage || category.imageUrl;
+
   return (
-    <Link to={`/category/${category.slug}`} tabIndex={duplicate ? -1 : 0} aria-hidden={duplicate ? true : undefined} data-3d-card data-reveal className="group block w-[clamp(140px,13vw,180px)] shrink-0 [transform-style:preserve-3d]">
+    // <Link
+    //   to={`/category/${category.slug}`}
+    <Link to={`/shop?category=${encodeURIComponent(category.slug)}`}
+      tabIndex={duplicate ? -1 : 0}
+      aria-hidden={duplicate ? true : undefined}
+      data-3d-card
+      data-reveal
+      className="group block w-[clamp(140px,13vw,180px)] shrink-0 [transform-style:preserve-3d]"
+    >
       <div className="relative aspect-square overflow-hidden rounded-t-[42%] rounded-b-xl bg-[#F1E4E2] shadow-[0_10px_24px_rgba(83,42,59,.08)]">
         {image ? (
-          <img src={image} alt={category.name} loading="lazy" className="h-full w-full scale-[1.06] object-cover transition-transform duration-700 ease-out group-hover:scale-100" />
+          <img
+            src={image}
+            alt={category.name}
+            loading="lazy"
+            className="h-full w-full scale-[1.06] object-cover transition-transform duration-700 ease-out group-hover:scale-100"
+          />
         ) : (
-          <ProductArt kind={category.art} className="h-full w-full scale-[1.06] transition-transform duration-700 ease-out group-hover:scale-100" />
+          <ProductArt
+            kind={category.art}
+            className="h-full w-full scale-[1.06] transition-transform duration-700 ease-out group-hover:scale-100"
+          />
         )}
-        <span className="absolute left-3 top-3 rounded-full border border-white/70 bg-[#FFF9F4]/90 px-3 py-1 text-[9px] font-bold uppercase tracking-[.18em] text-[#743C57]">0{index + 1}</span>
-        <span className="absolute bottom-3 right-3 grid h-9 w-9 place-items-center rounded-full bg-[#FFF9F4] text-[#743C57] shadow-sm transition group-hover:bg-[#743C57] group-hover:text-white"><ArrowRight size={16} /></span>
+
+        <span className="absolute left-3 top-3 rounded-full border border-white/70 bg-[#FFF9F4]/90 px-3 py-1 text-[9px] font-bold uppercase tracking-[.18em] text-[#743C57]">
+          0{index + 1}
+        </span>
+
+        <span className="absolute bottom-3 right-3 grid h-9 w-9 place-items-center rounded-full bg-[#FFF9F4] text-[#743C57] shadow-sm transition group-hover:bg-[#743C57] group-hover:text-white">
+          <ArrowRight size={16} />
+        </span>
       </div>
+
       <div className="px-2 pt-3 text-center">
-        <h3 className="font-heading text-base font-semibold text-[#4B303D] transition group-hover:text-[#8B526A]">{category.name}</h3>
-        <span className="mt-1 block text-[9px] uppercase tracking-[.2em] text-[#A27C83]">Explore collection</span>
+        <h3 className="font-heading text-base font-semibold text-[#4B303D] transition group-hover:text-[#8B526A]">
+          {category.name}
+        </h3>
+        <span className="mt-1 block text-[9px] uppercase tracking-[.2em] text-[#A27C83]">
+          Explore collection
+        </span>
       </div>
     </Link>
   );
 }
+
 
 export default function Home() {
   const { categories = [], products = [], loading, error } = useCatalog();

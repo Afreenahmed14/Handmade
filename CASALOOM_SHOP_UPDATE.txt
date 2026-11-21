@@ -1,0 +1,18 @@
+CasaLoom Shop All visual update
+
+Updated:
+- src/pages/Shop/Shop.tsx
+- src/pages/Shop/ShopDesign.css
+
+What changed:
+- Shop All category tiles now prefer the current uploaded product image over the old category image.
+- Category tiles are larger and product photography is clearer.
+- Shop All hero side product photos are larger.
+- Product section is now a separate rounded editorial container.
+- Added a left-side collection introduction with three small product photo previews.
+- Product cards appear in a clean responsive grid on the right, with room for the full catalogue and existing Load More behavior.
+- Existing search, filters, sorting, wishlist, product links, and cart-related functionality were preserved.
+
+Note:
+- .env and .git were intentionally excluded from this ZIP. Keep your local .env file unchanged.
+- Install dependencies with npm install, then run npm run dev.

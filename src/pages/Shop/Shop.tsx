@@ -111,7 +111,7 @@ export default function Shop() {
           <div className="relative z-10 grid items-center gap-2 lg:grid-cols-[minmax(95px,.7fr)_minmax(260px,1.7fr)_minmax(95px,.7fr)]">
             <div className="hidden items-center justify-center lg:flex">
               {products.find((product) => product.imageUrl)?.imageUrl ? (
-                <div className="w-24 rotate-[-7deg] overflow-hidden rounded-[26px] border-[5px] border-white/90 bg-white shadow-[0_18px_35px_rgba(100,45,77,.2)] transition duration-500 hover:rotate-0 hover:scale-105">
+                <div className="w-28 rotate-[-7deg] overflow-hidden rounded-[28px] lg:w-32 xl:w-36 border-[5px] border-white/90 bg-white shadow-[0_18px_35px_rgba(100,45,77,.2)] transition duration-500 hover:rotate-0 hover:scale-105">
                   <img src={products.find((product) => product.imageUrl)!.imageUrl} alt="Featured CasaLoom product" className="aspect-[4/5] w-full object-cover" />
                 </div>
               ) : <div className="text-8xl drop-shadow">🌷</div>}
@@ -128,7 +128,7 @@ export default function Shop() {
             </div>
             <div className="hidden items-center justify-center lg:flex">
               {products.filter((product) => product.imageUrl).length > 1 ? (
-                <div className="w-24 rotate-[7deg] overflow-hidden rounded-[26px] border-[5px] border-white/90 bg-white shadow-[0_18px_35px_rgba(100,45,77,.2)] transition duration-500 hover:rotate-0 hover:scale-105">
+                <div className="w-28 rotate-[7deg] overflow-hidden rounded-[28px] lg:w-32 xl:w-36 border-[5px] border-white/90 bg-white shadow-[0_18px_35px_rgba(100,45,77,.2)] transition duration-500 hover:rotate-0 hover:scale-105">
                   <img src={products.filter((product) => product.imageUrl)[1].imageUrl} alt="More CasaLoom decor" className="aspect-[4/5] w-full object-cover" />
                 </div>
               ) : <div className="text-8xl drop-shadow">🦋</div>}
@@ -143,12 +143,12 @@ export default function Shop() {
           <div className="mb-2 flex items-end justify-between gap-3">
             <div>
               <p className="text-[9px] font-bold uppercase tracking-[.25em] text-[#A45C7B]">Find your favourite</p>
-              <h2 className="mt-1 font-display text-xl font-semibold text-[#54243F] sm:text-2xl">Shop by category</h2>
+              <h2 className="mt-1 font-display text-lg font-semibold text-[#54243F] sm:text-xl">Shop by category</h2>
             </div>
             <span className="hidden text-xs text-[#946D80] sm:block">A little something for every space</span>
           </div>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
-            <button type="button" onClick={() => setFilters({ category: "" })} aria-pressed={!filters.category} className={`group relative flex min-h-[76px] items-center justify-between overflow-hidden rounded-xl border p-2 text-left shadow-[0_5px_16px_rgba(108,58,87,.08)] transition duration-300 hover:-translate-y-1 hover:shadow-lg ${!filters.category ? "border-[#A94C79] ring-2 ring-[#E9B7CB]" : "border-white/80"} bg-gradient-to-br from-[#713B58] to-[#A94C79] text-white`}>
+            <button type="button" onClick={() => setFilters({ category: "" })} aria-pressed={!filters.category} className={`group relative flex min-h-[112px] items-center justify-between overflow-hidden rounded-2xl border p-3 text-left sm:min-h-[126px] shadow-[0_5px_16px_rgba(108,58,87,.08)] transition duration-300 hover:-translate-y-1 hover:shadow-lg ${!filters.category ? "border-[#A94C79] ring-2 ring-[#E9B7CB]" : "border-white/80"} bg-gradient-to-br from-[#713B58] to-[#A94C79] text-white`}>
               <span className="pointer-events-none absolute -right-3 -top-5 h-24 w-24 rounded-full border border-white/20 bg-white/10" />
               <span className="pointer-events-none absolute -right-1 -top-1 h-16 w-16 rounded-full border border-white/25" />
               <span className="pointer-events-none absolute bottom-1 right-8 text-5xl text-[#F7C7D9]/35">✿</span>
@@ -157,13 +157,16 @@ export default function Shop() {
               <span className="relative z-10 rounded-full border border-white/35 bg-white/15 p-1.5 shadow-inner"><ArrowRight size={16} /></span>
             </button>
             {categories.map((category, index) => {
-              const categoryProduct = products.find((product) => product.categoryId === category.id && product.imageUrl);
-              const image = category.imageUrl || categoryProduct?.imageUrl;
+              const categoryProduct = products.find(
+                (product) => product.categoryId === category.id && product.imageUrl
+              );
+              // Use the latest product photo first; category.imageUrl is only a fallback.
+              const image = categoryProduct?.imageUrl || category.imageUrl;
               const selected = filters.category === category.slug;
               return (
-                <button key={category.id} type="button" onClick={() => setFilters({ category: selected ? "" : category.slug })} aria-pressed={selected} className={`group relative flex min-h-[76px] items-end overflow-hidden rounded-xl border p-2 text-left shadow-[0_5px_16px_rgba(108,58,87,.08)] transition duration-300 hover:-translate-y-1 hover:shadow-lg ${selected ? "border-[#A94C79] ring-2 ring-[#E9B7CB]" : "border-white/80"} bg-gradient-to-br ${tilePalettes[index % tilePalettes.length]}`}>
-                  {image ? <img src={image} alt="" aria-hidden="true" loading="lazy" className="absolute inset-0 h-full w-full object-cover opacity-55 mix-blend-multiply transition duration-500 group-hover:scale-110" /> : <div className="absolute inset-0 opacity-45"><ProductArt kind={category.art} className="h-full w-full" /></div>}
-                  <span className="absolute inset-0 bg-gradient-to-t from-white/95 via-white/30 to-transparent" />
+                <button key={category.id} type="button" onClick={() => setFilters({ category: selected ? "" : category.slug })} aria-pressed={selected} className={`group relative flex min-h-[112px] items-end overflow-hidden rounded-2xl border p-3 text-left sm:min-h-[126px] shadow-[0_5px_16px_rgba(108,58,87,.08)] transition duration-300 hover:-translate-y-1 hover:shadow-lg ${selected ? "border-[#A94C79] ring-2 ring-[#E9B7CB]" : "border-white/80"} bg-gradient-to-br ${tilePalettes[index % tilePalettes.length]}`}>
+                  {image ? <img src={image} alt="" aria-hidden="true" loading="lazy" className="absolute inset-0 h-full w-full object-cover opacity-95 transition duration-500 group-hover:scale-110" /> : <div className="absolute inset-0 opacity-45"><ProductArt kind={category.art} className="h-full w-full" /></div>}
+                  <span className="absolute inset-0 bg-gradient-to-t from-white/90 via-white/10 to-transparent" />
                   <span className="relative z-10 flex w-full items-center justify-between gap-1 text-[#552A43]"><span className="text-[11px] font-bold">{category.name}</span><ArrowRight size={15} className="shrink-0 transition group-hover:translate-x-1" /></span>
                   <span className="absolute right-2 top-1 text-xl text-white/90 drop-shadow">✧</span>
                 </button>
@@ -176,23 +179,80 @@ export default function Shop() {
 
 
 
-        <section className="casaloom-shop-products mt-5" aria-label="Products">
-          <div className="mb-2 flex items-end justify-between gap-3">
-            <div><p className="text-[9px] font-bold uppercase tracking-[.24em] text-[#A45C7B]">Lovely things, waiting to be yours</p><h2 className="mt-1 font-display text-xl font-semibold text-[#54243F] sm:text-2xl">{activeCategory?.name || (filters.q ? "Search results" : "Our little collection")}</h2></div>
-            {!loading && !error && <span className="rounded-full border border-white/90 bg-white/75 px-3 py-1.5 text-xs font-bold text-[#8B4567]">{results.length} {results.length === 1 ? "piece" : "pieces"}</span>}
-          </div>
-          {loading && <p role="status" className="rounded-2xl bg-white/75 py-12 text-center text-[#795468]">Gathering the lovely things...</p>}
-          {error && <p role="alert" className="rounded-2xl bg-white/85 py-12 text-center text-red-800">{error}</p>}
-          {!loading && !error && products.length === 0 && <p className="rounded-2xl bg-white/80 py-12 text-center text-[#795468]">No pieces are available in this collection yet.</p>}
-          {!loading && !error && results.length === 0 && products.length > 0 && <div className="rounded-2xl bg-white/85 py-12 text-center"><h3 className="font-display text-2xl text-[#54243F]">No pieces match just yet</h3><p className="mt-2 text-sm text-[#795468]">{unknownCategory ? "That category isn't available. " : ""}Try a different search or clear your filters.</p><button type="button" onClick={clearAll} className="btn-primary mt-5">Show all products</button></div>}
-          {!loading && !error && results.length > 0 && (
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6" aria-label="Product collection">
-              {results.slice(0, visible).map((product) => (
-                <ProductCard key={product.id} p={product} />
-              ))}
+        <section className="casaloom-shop-products mt-7" aria-label="Products">
+          <div className="casaloom-product-showcase grid gap-3 rounded-[24px] border border-white/90 bg-[linear-gradient(135deg,rgba(255,250,250,.96),rgba(255,238,245,.94)_48%,rgba(244,235,250,.94))] p-2.5 shadow-[0_16px_42px_rgba(104,43,83,.12)] sm:gap-3 sm:p-3 lg:grid-cols-[190px_minmax(0,1fr)] lg:items-start lg:gap-4 lg:p-4 xl:grid-cols-[205px_minmax(0,1fr)]">
+            <aside className="casaloom-product-intro relative flex self-start flex-col justify-start overflow-hidden rounded-[18px] border border-white/80 bg-[radial-gradient(circle_at_10%_5%,rgba(255,255,255,.95),transparent_40%),linear-gradient(155deg,#FBE6E8,#F1DDF0_58%,#FCE9E5)] p-3 sm:p-3.5">
+              <span aria-hidden="true" className="pointer-events-none absolute -right-7 -top-8 text-[100px] leading-none text-[#C17A9C]/15">✿</span>
+              <span className="relative z-10 inline-flex w-fit items-center gap-2 rounded-full border border-[#D99AB5] bg-white/75 px-3 py-1.5 text-[8px] font-extrabold uppercase tracking-[.2em] text-[#8B4567]">
+                <Sparkles size={12} /> Lovely little finds
+              </span>
+              <p className="relative z-10 mt-3 text-[8px] font-bold uppercase tracking-[.2em] text-[#A45C7B]">CasaLoom collection</p>
+              <h2 className="relative z-10 mt-2 font-display text-2xl font-medium leading-[1.02] text-[#54243F] sm:text-3xl">
+                Handpicked <span className="italic text-[#A45E78]">for your home.</span>
+              </h2>
+              <p className="relative z-10 mt-2 max-w-[30rem] text-[11px] leading-5 text-[#795468]">
+                A thoughtful mix of pretty tableware, floral bottles and keepsake décor to make everyday spaces feel special.
+              </p>
+              <div className="relative z-10 mt-3 flex items-center gap-1.5">
+                {products.filter((product) => product.imageUrl).slice(0, 3).map((product) => (
+                  <div key={product.id} className="h-[48px] w-[44px] overflow-hidden rounded-lg border-[2px] border-white bg-white shadow-[0_5px_12px_rgba(104,43,83,.12)] transition duration-300 hover:-translate-y-1">
+                    <img src={product.imageUrl} alt={product.name} loading="lazy" className="h-full w-full object-cover" />
+                  </div>
+                ))}
+              </div>
+              <button
+                type="button"
+                onClick={clearAll}
+                className="relative z-10 mt-3 inline-flex w-fit items-center gap-2 rounded-full bg-[#713B58] px-4 py-2 text-[9px] font-bold tracking-wide text-white shadow-[0_7px_16px_rgba(113,59,88,.18)] transition hover:-translate-y-0.5 hover:bg-[#572A43]"
+              >
+                Explore all products <ArrowRight size={14} />
+              </button>
+              <div className="relative z-10 mt-3 flex items-center gap-2 text-[7px] font-bold uppercase tracking-[.16em] text-[#9B6B80]">
+                <span className="h-px w-7 bg-[#C99EA4]" /> Curated with a little extra love
+              </div>
+            </aside>
+
+            <div className="min-w-0">
+              <div className="mb-2 flex flex-wrap items-end justify-between gap-2 px-1">
+                <div>
+                  <p className="text-[9px] font-bold uppercase tracking-[.24em] text-[#A45C7B]">Lovely things, waiting to be yours</p>
+                  <h2 className="mt-1 font-display text-lg font-semibold text-[#54243F] sm:text-xl">
+                    {activeCategory?.name || (filters.q ? "Search results" : "Our little collection")}
+                  </h2>
+                </div>
+                {!loading && !error && (
+                  <span className="rounded-full border border-white/90 bg-white/80 px-3 py-1.5 text-xs font-bold text-[#8B4567] shadow-sm">
+                    {results.length} {results.length === 1 ? "piece" : "pieces"}
+                  </span>
+                )}
+              </div>
+
+              {loading && <p role="status" className="rounded-2xl border border-white bg-white/75 py-12 text-center text-sm text-[#795468]">Gathering the lovely things...</p>}
+              {error && <p role="alert" className="rounded-2xl border border-white bg-white/85 py-12 text-center text-sm text-red-800">{error}</p>}
+              {!loading && !error && products.length === 0 && <p className="rounded-2xl border border-white bg-white/80 py-12 text-center text-sm text-[#795468]">No pieces are available in this collection yet.</p>}
+              {!loading && !error && results.length === 0 && products.length > 0 && (
+                <div className="rounded-2xl border border-white bg-white/85 py-12 text-center">
+                  <h3 className="font-display text-2xl text-[#54243F]">No pieces match just yet</h3>
+                  <p className="mt-2 text-sm text-[#795468]">{unknownCategory ? "That category isn't available. " : ""}Try a different search or clear your filters.</p>
+                  <button type="button" onClick={clearAll} className="btn-primary mt-5">Show all products</button>
+                </div>
+              )}
+              {!loading && !error && results.length > 0 && (
+                <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-5" aria-label="Product collection">
+                  {results.slice(0, visible).map((product) => (
+                    <ProductCard key={product.id} p={product} />
+                  ))}
+                </div>
+              )}
+              {!loading && !error && results.length > visible && (
+                <div className="mt-5 text-center">
+                  <button type="button" onClick={() => setVisible((n) => n + 24)} className="rounded-full border border-[#B96E91] bg-white/90 px-6 py-2.5 text-xs font-bold text-[#713B58] shadow-sm transition hover:bg-[#713B58] hover:text-white">
+                    Load more lovely finds <ArrowRight size={14} className="ml-1 inline" />
+                  </button>
+                </div>
+              )}
             </div>
-          )}
-          {!loading && !error && results.length > visible && <div className="mt-5 text-center"><button type="button" onClick={() => setVisible((n) => n + 24)} className="rounded-full border border-[#B96E91] bg-white/85 px-6 py-2.5 text-xs font-bold text-[#713B58] shadow-sm transition hover:bg-[#713B58] hover:text-white">Load more lovely finds <ArrowRight size={14} className="ml-1 inline" /></button></div>}
+          </div>
         </section>
       </div>
     </main>
