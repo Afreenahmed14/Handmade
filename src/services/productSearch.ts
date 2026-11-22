@@ -10,24 +10,21 @@ export type SortKey = "newest" | "price-asc" | "price-desc" | "name" | "featured
 export interface ProductFilters {
   q: string;
   category: string; // category slug, "" for all
-  min: string; // raw text so the input can be edited freely
-  max: string;
   stock: StockFilter;
   customizable: boolean;
   sort: SortKey;
 }
 
-export const defaultFilters: ProductFilters = { q: "", category: "", min: "", max: "", stock: "all", customizable: false, sort: "newest" };
+export const defaultFilters: ProductFilters = { q: "", category: "", stock: "all", customizable: false, sort: "newest" };
 export const sortOptions: { value: SortKey; label: string }[] = [
-  { value: "newest", label: "Newest" }, { value: "featured", label: "Featured" }, { value: "price-asc", label: "Price: low to high" },
-  { value: "price-desc", label: "Price: high to low" }, { value: "name", label: "Name: A–Z" },
+  { value: "newest", label: "Newest" },
+  { value: "featured", label: "Featured" },
+  { value: "price-asc", label: "Amount: Increasing" },
+  { value: "price-desc", label: "Amount: Decreasing" },
+  { value: "name", label: "Name: A–Z" },
 ];
 const sortKeys = sortOptions.map((o) => o.value);
 
-function cleanAmount(raw: string | null): string {
-  const value = (raw ?? "").trim();
-  return /^\d{1,9}(\.\d{1,2})?$/.test(value) ? value : "";
-}
 
 /** Reads filters from the URL; anything invalid falls back to the default so a hand-edited URL can't break the page. */
 export function parseFilters(params: URLSearchParams): ProductFilters {
@@ -36,8 +33,6 @@ export function parseFilters(params: URLSearchParams): ProductFilters {
   return {
     q: (params.get("q") ?? "").replace(/\s+/g, " ").trim().slice(0, 100),
     category: /^[a-z0-9-]{1,80}$/.test(params.get("category") ?? "") ? params.get("category")! : "",
-    min: cleanAmount(params.get("min")),
-    max: cleanAmount(params.get("max")),
     stock: stock === "in" || stock === "out" ? stock : "all",
     customizable: params.get("custom") === "1",
     sort: sort && sortKeys.includes(sort) ? sort : "newest",
@@ -49,8 +44,6 @@ export function filtersToParams(filters: ProductFilters): URLSearchParams {
   const params = new URLSearchParams();
   if (filters.q) params.set("q", filters.q);
   if (filters.category) params.set("category", filters.category);
-  if (filters.min) params.set("min", filters.min);
-  if (filters.max) params.set("max", filters.max);
   if (filters.stock !== "all") params.set("stock", filters.stock);
   if (filters.customizable) params.set("custom", "1");
   if (filters.sort !== "newest") params.set("sort", filters.sort);
@@ -58,11 +51,8 @@ export function filtersToParams(filters: ProductFilters): URLSearchParams {
 }
 
 export const effectivePrice = (product: Product) => product.discountPrice ?? product.price;
-export const priceRangeError = (f: Pick<ProductFilters, "min" | "max">) =>
-  f.min && f.max && Number(f.min) > Number(f.max) ? "Minimum price can't be higher than the maximum." : "";
-
 export function activeFilterCount(f: ProductFilters): number {
-  return [f.category, f.min, f.max, f.stock !== "all", f.customizable].filter(Boolean).length;
+  return [f.category, f.stock !== "all", f.customizable].filter(Boolean).length;
 }
 export const hasAnyFilter = (f: ProductFilters) => activeFilterCount(f) > 0 || !!f.q;
 
@@ -77,16 +67,9 @@ function haystack(product: Product): string {
 export function applyFilters(products: Product[], categories: Category[], f: ProductFilters): Product[] {
   const category = f.category ? categories.find((c) => c.slug === f.category) : undefined;
   const words = f.q.toLowerCase().split(" ").filter(Boolean);
-  const rangeBroken = !!priceRangeError(f);
-  const min = f.min && !rangeBroken ? Number(f.min) : null;
-  const max = f.max && !rangeBroken ? Number(f.max) : null;
-
   const indexed = products.map((product, index) => ({ product, index })).filter(({ product }) => {
     if (f.category && (!category || product.categoryId !== category.id)) return false;
     if (words.length) { const text = haystack(product); if (!words.every((w) => text.includes(w))) return false; }
-    const price = effectivePrice(product);
-    if (min !== null && price < min) return false;
-    if (max !== null && price > max) return false;
     if (f.stock === "in" && !isPurchasable(product)) return false;
     if (f.stock === "out" && isPurchasable(product)) return false;
     if (f.customizable && !product.customizable) return false;

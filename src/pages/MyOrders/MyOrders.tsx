@@ -15,8 +15,7 @@ import {
 } from "lucide-react";
 import { supabase } from "../../lib/supabase";
 import { formatINR } from "../../utils/currency";
-import { selectSimpleOrderPayment, submitSimpleOrderFeedback } from "../../services/simpleOrders";
-import type { DbOrderRow, OrderStatus, PaymentMethod } from "../../types/database";
+import type { DbOrderRow, OrderStatus } from "../../types/database";
 import { customerPaymentLabel, customerOrderStatusLabel } from "../../utils/orderStatus";
 import OrderThumb from "../../components/orders/OrderThumb";
 
@@ -31,6 +30,7 @@ type Item = {
 type Filter = "all" | "confirmed" | "processing" | "delivered";
 
 const deliveryStages = [
+  { label: "Order placed", icon: Package },
   { label: "Confirmed", icon: Check },
   { label: "Processing", icon: Truck },
   { label: "Out for Delivery", icon: Package },
@@ -38,10 +38,11 @@ const deliveryStages = [
 ] as const;
 
 function stageForStatus(status: OrderStatus) {
-  if (status === "confirmed") return 0;
-  if (status === "processing" || status === "shipped") return 1;
-  if (status === "out_for_delivery") return 2;
-  if (status === "delivered") return 3;
+  if (status === "pending") return 0;
+  if (status === "confirmed") return 1;
+  if (status === "processing" || status === "shipped") return 2;
+  if (status === "out_for_delivery") return 3;
+  if (status === "delivered") return 4;
   return -1;
 }
 
@@ -55,10 +56,6 @@ function formatExpectedDate(value: string | null) {
 export default function MyOrders() {
   const [orders, setOrders] = useState<DbOrderRow[]>([]);
   const [items, setItems] = useState<Item[]>([]);
-  const [ratings, setRatings] = useState<Record<string, number>>({});
-  const [comments, setComments] = useState<Record<string, string>>({});
-  const [done, setDone] = useState<string[]>([]);
-  const [busy, setBusy] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<Filter>("all");
@@ -82,33 +79,6 @@ export default function MyOrders() {
   useEffect(() => {
     void load().catch((e) => setError(e instanceof Error ? e.message : "Unable to load orders")).finally(() => setLoading(false));
   }, []);
-
-  async function choosePayment(orderId: string, method: PaymentMethod) {
-    setBusy(orderId);
-    setError("");
-    try {
-      await selectSimpleOrderPayment(orderId, method);
-      await load();
-      if (method === "upi") window.location.assign(`/payment/${orderId}`);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Unable to select payment");
-    } finally {
-      setBusy("");
-    }
-  }
-
-  async function feedback(orderId: string) {
-    setBusy(orderId);
-    setError("");
-    try {
-      await submitSimpleOrderFeedback(orderId, ratings[orderId] ?? 5, comments[orderId] ?? "");
-      setDone((value) => [...value, orderId]);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Unable to submit feedback");
-    } finally {
-      setBusy("");
-    }
-  }
 
   async function copyOrderNumber(orderNumber: string) {
     try {
@@ -147,7 +117,7 @@ export default function MyOrders() {
           <div>
             <p className="casaloom-orders-eyebrow">Your CasaLoom account</p>
             <h1>My Orders</h1>
-            <p className="casaloom-orders-subtitle">Your requests, payment choices and delivery updates in one place.</p>
+            <p className="casaloom-orders-subtitle">Your orders, payment details and delivery updates in one place.</p>
           </div>
           <div className="casaloom-orders-heading-art" aria-hidden="true">
             <span className="casaloom-orders-art-flower">✿</span>
@@ -232,9 +202,7 @@ export default function MyOrders() {
                         {order.order_status === "delivered" && <CheckCircle2 size={15} />}
                         {customerOrderStatusLabel[order.order_status]}
                       </span>
-                      {order.order_status !== "pending" && order.order_status !== "cancelled" && (
-                        <Link to={`/track/${order.id}`} className="casaloom-order-track"><MapPin size={17} /> Track Order</Link>
-                      )}
+                      <Link to={`/track/${order.id}`} className="casaloom-order-track"><MapPin size={17} /> Track Order</Link>
                       <Link to={`/track/${order.id}`} className="casaloom-order-details"><ClipboardList size={17} /> Order Details</Link>
                     </div>
                   </div>
@@ -246,31 +214,9 @@ export default function MyOrders() {
                   </div>
 
                   {order.order_status === "pending" && (
-                    <div className="casaloom-order-inline-note">Your order request is waiting for CasaLoom approval. You can choose payment after it is accepted.</div>
+                    <div className="casaloom-order-inline-note">Your order has been placed. We'll update its progress here.</div>
                   )}
-                  {order.order_status === "cancelled" && <div className="casaloom-order-inline-note cancelled">This order request was declined or cancelled.</div>}
-
-                  {order.order_status === "confirmed" && !order.payment_method && (
-                    <div className="casaloom-order-payment-choice">
-                      <p>Your order is accepted. Choose how you would like to pay:</p>
-                      <button disabled={busy === order.id} onClick={() => void choosePayment(order.id, "upi")}>Pay online (UPI)</button>
-                      <button disabled={busy === order.id} onClick={() => void choosePayment(order.id, "cod")}>Cash on delivery</button>
-                    </div>
-                  )}
-
-                  {order.order_status === "delivered" && !done.includes(order.id) && (
-                    <div className="casaloom-order-feedback">
-                      <p>How was your order?</p>
-                      <div className="casaloom-order-stars">
-                        {[1, 2, 3, 4, 5].map((number) => (
-                          <button key={number} type="button" onClick={() => setRatings((value) => ({ ...value, [order.id]: number }))} aria-label={`${number} stars`} className={number <= (ratings[order.id] ?? 5) ? "selected" : ""}>★</button>
-                        ))}
-                      </div>
-                      <textarea value={comments[order.id] ?? ""} onChange={(event) => setComments((value) => ({ ...value, [order.id]: event.target.value }))} rows={2} placeholder="Share your feedback (optional)" />
-                      <button disabled={busy === order.id} onClick={() => void feedback(order.id)}>Submit feedback</button>
-                    </div>
-                  )}
-                  {done.includes(order.id) && <p className="casaloom-order-thanks">Thank you for your feedback!</p>}
+                  {order.order_status === "cancelled" && <div className="casaloom-order-inline-note cancelled">This order was cancelled.</div>}
                 </article>
               );
             })}

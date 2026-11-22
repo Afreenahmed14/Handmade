@@ -5,6 +5,4 @@ export interface Product {
   price: number; discountPrice?: number; material: string; colour: string;
   art: ArtKind; customizable: boolean; stock: number; tag?: "new" | "best" | "featured";
   description: string; imageUrl?: string; categorySlug?: string; categoryId?: string; published?: boolean;
-  /** True when photo personalisation is enabled (see product_personalization). Absent/false for normal products. */
-  personalised?: boolean;
 }

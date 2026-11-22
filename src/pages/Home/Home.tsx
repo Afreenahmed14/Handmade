@@ -84,9 +84,8 @@ function CategoryCard({
   const image = productImage || category.imageUrl;
 
   return (
-    // <Link
-    //   to={`/category/${category.slug}`}
-    <Link to={`/shop?category=${encodeURIComponent(category.slug)}`}
+    <Link
+      to={`/category/${category.slug}`}
       tabIndex={duplicate ? -1 : 0}
       aria-hidden={duplicate ? true : undefined}
       data-3d-card

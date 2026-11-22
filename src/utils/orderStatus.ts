@@ -18,7 +18,7 @@ export const customerOrderStatusLabel: Record<OrderStatus, string> = {
 };
 
 export const customerOrderStatusMessage: Record<OrderStatus, string> = {
-  pending: "We have your order and our team will confirm it shortly.",
+  pending: "Your order has been placed. We will update its progress here.",
   confirmed: "Your order is confirmed. We will start preparing it soon.",
   processing: "Your pieces are being checked and carefully packed.",
   shipped: "Your order is on its way to you.",

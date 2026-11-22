@@ -53,16 +53,6 @@ function mapProduct(row: ProductRow, categoryName: string, imageUrl?: string, ca
   };
 }
 
-/** Ids of products with photo personalisation enabled. Best-effort: a failure must never break the normal catalog. */
-async function getPersonalisedIds(): Promise<Set<string>> {
-  try {
-    const { data, error } = await supabase.from("product_personalization").select("product_id").eq("is_enabled", true);
-    if (error) return new Set();
-    return new Set(data.map(({ product_id }) => product_id));
-  } catch {
-    return new Set();
-  }
-}
 
 export async function getCategories(includeInactive = false): Promise<Category[]> {
   let query = supabase.from("categories").select("*").order("name");
@@ -95,11 +85,10 @@ export async function getProducts(publishedOnly = true): Promise<Product[]> {
     if (image.is_primary || !primaryImages.has(image.product_id)) primaryImages.set(image.product_id, image.image_url);
   }
 
-  const personalisedIds = await getPersonalisedIds();
   return products.map((row) => {
     const categorySlug = row.category_id ? artSlugs.get(row.category_id) : undefined;
     const mapped = mapProduct(row, row.category_id ? categoryNames.get(row.category_id) ?? "" : "", primaryImages.get(row.id), categorySlug);
-    return { ...mapped, art: categoryArt(categorySlug ?? ""), personalised: personalisedIds.has(row.id) };
+    return { ...mapped, art: categoryArt(categorySlug ?? "") };
   });
 }
 
@@ -111,8 +100,7 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
     data.category_id ? supabase.from("categories").select("name,slug").eq("id", data.category_id).maybeSingle() : Promise.resolve({ data: null, error: null }),
     supabase.from("product_images").select("image_url").eq("product_id", data.id).order("is_primary", { ascending: false }).order("display_order").limit(1).maybeSingle(),
   ]);
-  const personalised = (await getPersonalisedIds()).has(data.id);
-  return { ...mapProduct(data, category?.name ?? "", image?.image_url, category?.slug), art: category ? categoryArt(category.slug) : "vase", personalised };
+  return { ...mapProduct(data, category?.name ?? "", image?.image_url, category?.slug), art: category ? categoryArt(category.slug) : "vase" };
 }
 
 /**
@@ -122,7 +110,6 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
 export async function getProductsByIds(ids: string[]): Promise<Map<string, Product>> {
   const uniqueIds = [...new Set(ids)];
   const found = new Map<string, Product>();
-  const personalisedIds = uniqueIds.length ? await getPersonalisedIds() : new Set<string>();
   for (let start = 0; start < uniqueIds.length; start += 50) {
     const chunk = uniqueIds.slice(start, start + 50);
     const { data: products, error } = await supabase.from("products").select("*").in("id", chunk).eq("is_published", true);
@@ -144,7 +131,7 @@ export async function getProductsByIds(ids: string[]): Promise<Map<string, Produ
     }
     for (const row of products) {
       const category = row.category_id ? categoryById.get(row.category_id) : undefined;
-      found.set(row.id, { ...mapProduct(row, category?.name ?? "", primaryImages.get(row.id), category?.slug), art: categoryArt(category?.slug ?? ""), personalised: personalisedIds.has(row.id) });
+      found.set(row.id, { ...mapProduct(row, category?.name ?? "", primaryImages.get(row.id), category?.slug), art: categoryArt(category?.slug ?? "") });
     }
   }
   return found;

@@ -3,8 +3,6 @@ import { Check, ImagePlus, Pencil, Plus, Search, Star, Trash2, X } from "lucide-
 import { deleteProduct, getCategories, getProductImages, getProducts, saveProduct, type ProductImageRow, type ProductWrite } from "../../services/catalog";
 import { setPrimaryProductImage, uploadProductImages } from "../../services/storage";
 import { adjustInventoryStock } from "../../services/inventory";
-import { getEnabledPersonalizationIds, getPersonalizationForAdmin, savePersonalization } from "../../services/personalization";
-import PersonalizationFields, { buildPersonalizationWrite, emptyPersonalizationForm, toPersonalizationForm, type PersonalizationForm } from "./PersonalizationFields";
 import { formatINR } from "../../utils/currency";
 import type { Category, Product } from "../../types";
 
@@ -63,24 +61,19 @@ export default function Products() {
   const [form, setForm] = useState<ProductForm>(emptyForm);
   const [slugTouched, setSlugTouched] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const [pForm, setPForm] = useState<PersonalizationForm>(emptyPersonalizationForm);
-  const [hadConfig, setHadConfig] = useState(false);
-  const [personalisedIds, setPersonalisedIds] = useState<Set<string>>(new Set());
 
   async function reload() {
-    const [nextProducts, nextCategories, nextIds] = await Promise.all([getProducts(false), getCategories(true), getEnabledPersonalizationIds().catch(() => new Set<string>())]);
+    const [nextProducts, nextCategories] = await Promise.all([getProducts(false), getCategories(true)]);
     setProducts(nextProducts);
     setCategories(nextCategories);
-    setPersonalisedIds(nextIds);
   }
 
   useEffect(() => {
     let active = true;
-    void Promise.all([getProducts(false), getCategories(true), getEnabledPersonalizationIds().catch(() => new Set<string>())]).then(([nextProducts, nextCategories, nextIds]) => {
+    void Promise.all([getProducts(false), getCategories(true)]).then(([nextProducts, nextCategories]) => {
       if (!active) return;
       setProducts(nextProducts);
       setCategories(nextCategories);
-      setPersonalisedIds(nextIds);
     }).catch((reason: unknown) => {
       if (active) setPageError(errorText(reason));
     }).finally(() => {
@@ -102,8 +95,6 @@ export default function Products() {
   function startCreate() {
     setEditing(null);
     setForm(emptyForm);
-    setPForm(emptyPersonalizationForm);
-    setHadConfig(false);
     setImages([]);
     setSelectedFiles([]);
     setSlugTouched(false);
@@ -115,8 +106,6 @@ export default function Products() {
   async function startEdit(product: Product) {
     setEditing(product);
     setForm(toForm(product));
-    setPForm(emptyPersonalizationForm);
-    setHadConfig(false);
     setSelectedFiles([]);
     setSlugTouched(true);
     setFormError("");
@@ -127,14 +116,6 @@ export default function Products() {
     } catch (reason) {
       setImages([]);
       setFormError(errorText(reason));
-    }
-    try {
-      const config = await getPersonalizationForAdmin(product.id);
-      setHadConfig(config !== null);
-      setPForm(toPersonalizationForm(config));
-    } catch (reason) {
-      // Without the saved settings the form must not overwrite them, so block saving until they load.
-      setFormError(`Personalisation settings could not be loaded; close and reopen this product before saving. ${errorText(reason)}`);
     }
   }
 
@@ -166,18 +147,11 @@ export default function Products() {
     if (discount !== null && (!Number.isFinite(discount) || discount < 0 || discount > price)) return setFormError("Discount price must be between zero and the regular price.");
     if (!Number.isInteger(stock) || stock < 0) return setFormError("Stock must be a non-negative whole number.");
 
-    const savePersonalisation = pForm.enabled || hadConfig;
-    let personalizationInput: ReturnType<typeof buildPersonalizationWrite> | null = null;
-    if (savePersonalisation) {
-      personalizationInput = buildPersonalizationWrite(editing?.id ?? "", pForm);
-      if ("error" in personalizationInput) return setFormError(personalizationInput.error);
-    }
-
     const payload: ProductWrite = {
       name: form.name.trim(), slug, sku: form.sku.trim(), description: form.description.trim(),
       category_id: form.categoryId || null, price_inr: price, discount_price_inr: discount,
       material: form.material.trim() || null, colour: form.colour.trim() || null, stock_quantity: stock,
-      is_customizable: form.customizable || pForm.enabled, is_published: form.published, is_featured: form.featured,
+      is_customizable: form.customizable, is_published: form.published, is_featured: form.featured,
     };
     const targetStock = payload.stock_quantity ?? 0;
     const productPayload: ProductWrite = { ...payload };
@@ -188,9 +162,6 @@ export default function Products() {
     try {
       const saved = await saveProduct(productPayload, editing?.id);
       productWasSaved = true;
-      if (personalizationInput && "value" in personalizationInput) {
-        await savePersonalization({ ...personalizationInput.value, product_id: saved.id });
-      }
       let savedStock = saved.stock_quantity;
       if (editing && targetStock !== editing.stock) {
         const stockResult = await adjustInventoryStock({
@@ -219,7 +190,7 @@ export default function Products() {
       setFormOpen(false);
       setEditing(null);
     } catch (reason) {
-      setFormError(productWasSaved ? `Product saved, but a follow-up step (personalisation settings, images or refresh) failed: ${errorText(reason)}` : errorText(reason));
+      setFormError(productWasSaved ? `Product saved, but a follow-up step (images or refresh) failed: ${errorText(reason)}` : errorText(reason));
       if (productWasSaved) {
         try { await reload(); } catch { /* Keep the original save error visible. */ }
       }
@@ -286,7 +257,7 @@ export default function Products() {
         <table className="w-full min-w-[46rem] text-left text-sm">
           <thead className="border-b border-brass/30 text-xs uppercase text-walnut/70"><tr><th className="py-3 pr-4 font-medium">Product</th><th className="py-3 pr-4 font-medium">Category</th><th className="py-3 pr-4 font-medium">Price</th><th className="py-3 pr-4 font-medium">Stock</th><th className="py-3 pr-4 font-medium">Status</th><th className="py-3 text-right font-medium">Actions</th></tr></thead>
           <tbody>{filteredProducts.map((product) => <tr key={product.id} className="border-b border-brass/20 last:border-0">
-            <td className="py-3 pr-4"><div className="flex items-center gap-3">{product.imageUrl ? <img src={product.imageUrl} alt="" className="h-12 w-10 object-cover" /> : <div className="h-12 w-10 bg-walnut/10" />}<div><p className="font-medium text-espresso">{product.name}{personalisedIds.has(product.id) && <span className="ml-2 border border-brass/50 px-1.5 py-0.5 text-[10px] font-normal uppercase text-walnut">Personalised</span>}</p><p className="text-xs text-walnut/70">{product.sku}</p></div></div></td>
+            <td className="py-3 pr-4"><div className="flex items-center gap-3">{product.imageUrl ? <img src={product.imageUrl} alt="" className="h-12 w-10 object-cover" /> : <div className="h-12 w-10 bg-walnut/10" />}<div><p className="font-medium text-espresso">{product.name}{product.customizable && <span className="ml-2 border border-brass/50 px-1.5 py-0.5 text-[10px] font-normal uppercase text-walnut">Photo upload enabled</span>}</p><p className="text-xs text-walnut/70">{product.sku}</p></div></div></td>
             <td className="py-3 pr-4">{product.category || "Unassigned"}</td>
             <td className="py-3 pr-4">{formatINR(product.discountPrice ?? product.price)}{product.discountPrice !== undefined && <span className="ml-1 text-xs text-walnut/60 line-through">{formatINR(product.price)}</span>}</td>
             <td className="py-3 pr-4">{product.stock}</td>
@@ -315,7 +286,6 @@ export default function Products() {
               <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={form.featured} onChange={(event) => updateField("featured", event.target.checked)} />Featured</label>
               <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={form.customizable} onChange={(event) => updateField("customizable", event.target.checked)} />Customizable</label>
             </div>
-            <PersonalizationFields form={pForm} onChange={(patch) => setPForm((current) => ({ ...current, ...patch }))} />
             <label className="grid gap-2 text-sm sm:col-span-2"><span className="flex items-center gap-2"><ImagePlus size={17} />Product images</span><input type="file" accept="image/jpeg,image/png,image/webp" multiple onChange={(event) => setSelectedFiles(Array.from(event.target.files ?? []))} className="block w-full text-sm file:mr-3 file:border-0 file:bg-walnut file:px-3 file:py-2 file:text-cream" />{selectedFiles.length > 0 && <span className="text-xs text-walnut/70">{selectedFiles.length} image(s) selected</span>}</label>
             {images.length > 0 && <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:col-span-2">{images.map((image) => <div key={image.id} className="border border-brass/30 p-2"><img src={image.image_url} alt="Product" className="aspect-square w-full object-cover" /><button type="button" onClick={() => void choosePrimary(image.id, image.product_id)} disabled={image.is_primary} className="mt-2 flex w-full items-center justify-center gap-1 text-xs text-walnut disabled:opacity-60">{image.is_primary ? <><Star size={14} fill="currentColor" />Primary</> : <><Star size={14} />Set primary</>}</button></div>)}</div>}
             {formError && <p role="alert" className="sm:col-span-2 text-sm text-red-800">{formError}</p>}

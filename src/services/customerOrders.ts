@@ -16,13 +16,13 @@ const FILTER_STATUSES: Record<Exclude<CustomerOrderFilter, "all">, OrderStatus[]
   closed: ["cancelled", "returned"],
 };
 
-const ORDER_COLUMNS = "id,order_number,customer_name,customer_phone,shipping_address,order_status,payment_method,payment_status,subtotal_inr,discount_inr,delivery_charge_inr,total_inr,customer_note,coupon_code,created_at,updated_at";
+const ORDER_COLUMNS = "id,order_number,customer_name,customer_phone,shipping_address,order_status,payment_method,payment_status,subtotal_inr,discount_inr,delivery_charge_inr,total_inr,customer_note,coupon_code,customization_photo_path,expected_delivery_date,created_at,updated_at";
 const ORDER_NUMBER_PATTERN = /^(?:CL|VH)-\d{8}-[A-Z0-9]{8}$/;
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export type CustomerOrder = Pick<DbOrderRow,
   "id" | "order_number" | "customer_name" | "customer_phone" | "shipping_address" | "order_status" | "payment_method" | "payment_status"
-  | "subtotal_inr" | "discount_inr" | "delivery_charge_inr" | "total_inr" | "customer_note" | "coupon_code" | "created_at" | "updated_at">;
+  | "subtotal_inr" | "discount_inr" | "delivery_charge_inr" | "total_inr" | "customer_note" | "coupon_code" | "customization_photo_path" | "expected_delivery_date" | "created_at" | "updated_at">;
 
 export interface CustomerOrderItem {
   id: string;
@@ -74,6 +74,7 @@ export interface OrderTracking {
   paymentStatus: OrderPaymentStatus;
   createdAt: string;
   updatedAt: string;
+  expectedDeliveryDate: string | null;
   shipment: TrackingShipment | null;
   timeline: TrackingEvent[];
 }
@@ -164,7 +165,7 @@ export async function getOrderTracking(orderId: string): Promise<OrderTracking> 
 
 export function parseTracking(data: Json): OrderTracking {
   if (!isRecord(data)) throw new Error("Tracking details were not returned in the expected format.");
-  const { order_id, order_number, order_status, payment_method, payment_status, created_at, updated_at, shipment, timeline } = data;
+  const { order_id, order_number, order_status, payment_method, payment_status, created_at, updated_at, expected_delivery_date, shipment, timeline } = data;
   if (typeof order_id !== "string" || typeof order_number !== "string" || !isOrderStatus(order_status) || !isPaymentStatus(payment_status)
     || (payment_method !== null && payment_method !== "upi" && payment_method !== "cod") || typeof created_at !== "string" || typeof updated_at !== "string") {
     throw new Error("Tracking details were not returned in the expected format.");
@@ -188,7 +189,8 @@ export function parseTracking(data: Json): OrderTracking {
   }
   return {
     orderId: order_id, orderNumber: order_number, orderStatus: order_status, paymentMethod: payment_method as PaymentMethod | null,
-    paymentStatus: payment_status, createdAt: created_at, updatedAt: updated_at, shipment: parsedShipment, timeline: events,
+    paymentStatus: payment_status, createdAt: created_at, updatedAt: updated_at,
+    expectedDeliveryDate: textOrNull(expected_delivery_date), shipment: parsedShipment, timeline: events,
   };
 }
 

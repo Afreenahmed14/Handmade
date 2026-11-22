@@ -2,7 +2,6 @@ import { useEffect, useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Building2,
-  ClipboardList,
   Globe2,
   LogOut,
   MapPin,
@@ -190,9 +189,6 @@ export default function Profile() {
             <Link to="/my-orders" className="casaloom-profile-quick-link">
               <Package size={16} /> My orders
             </Link>
-            <Link to="/my-requests" className="casaloom-profile-quick-link">
-              <ClipboardList size={16} /> My requests
-            </Link>
             <button type="button" onClick={signOut} className="casaloom-profile-quick-link">
               <LogOut size={16} /> Sign out
             </button>
@@ -215,7 +211,6 @@ export default function Profile() {
 
             <div className="casaloom-profile-side-links">
               <Link to="/my-orders"><Package size={17} /> <span>My orders</span><span className="casaloom-profile-link-arrow">↗</span></Link>
-              <Link to="/my-requests"><ClipboardList size={17} /> <span>My requests</span><span className="casaloom-profile-link-arrow">↗</span></Link>
               <button type="button" onClick={signOut}><LogOut size={17} /> <span>Sign out</span><span className="casaloom-profile-link-arrow">↗</span></button>
             </div>
           </aside>

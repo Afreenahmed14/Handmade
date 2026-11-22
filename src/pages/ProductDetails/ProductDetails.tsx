@@ -8,6 +8,7 @@ import type { Product } from "../../types";
 import { getProductBySlug } from "../../services/catalog";
 import { isPurchasable, stockLabel } from "../../services/cartPricing";
 import { createSimpleOrderRequest } from "../../services/simpleOrders";
+import type { PaymentMethod } from "../../types/database";
 import { useStoreSettings } from "../../context/StoreSettingsContext";
 import { useCart } from "../../context/CartContext";
 
@@ -24,7 +25,8 @@ export default function ProductDetails() {
   const [saving, setSaving] = useState(false);
   const [photo, setPhoto] = useState<File | null>(null);
   const [quantity, setQuantity] = useState(1);
-  const [form, setForm] = useState({ phone: "", address: "", city: "", state: "", postal: "", note: "" });
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("upi");
+  const [form, setForm] = useState({ phone: "", address: "", city: "", state: "", postal: "" });
   const [notice, setNotice] = useState("");
 
   useEffect(() => {
@@ -57,9 +59,10 @@ export default function ProductDetails() {
       const id = await createSimpleOrderRequest({
         productId: product!.id, quantity,
         shippingAddress: { phone: form.phone, address_line1: form.address, city: form.city, state: form.state, postal_code: form.postal, country: "India" },
-        idempotencyKey: crypto.randomUUID(), customizationPhoto: photo, customizationNote: form.note,
+        idempotencyKey: crypto.randomUUID(), customizationPhoto: photo, paymentMethod,
       });
-      navigate("/my-orders", { state: { submittedOrderId: id } });
+      if (paymentMethod === "upi") navigate(`/payment/${id}`);
+      else navigate(`/my-orders/${id}`, { state: { submittedOrderId: id } });
     } catch (e) { setNotice(e instanceof Error ? e.message : "Unable to submit your order request."); }
     finally { setSaving(false); }
   }
@@ -80,7 +83,7 @@ export default function ProductDetails() {
           <button type="button" aria-pressed={wished} onClick={() => toggleWishlist(product)} className="btn-outline !px-3 !py-2 !text-sm"><Heart size={14} fill={wished ? "#64234e" : "none"}/>{wished ? "Saved" : "Wishlist"}</button>
           {whatsappUrl && <a href={whatsappUrl} target="_blank" rel="noreferrer" className="btn-outline !px-3 !py-2 !text-sm"><MessageCircle size={14}/> Customization enquiry</a>}
         </div>
-        <p className="mt-3 max-w-xl text-[11px] leading-relaxed text-espresso/60">Your order is sent to CasaLoom for approval first. Payment options become available only after we accept your request.</p>
+
       </div>
     </div>
     {showOrder && <div className="fixed inset-0 z-50 flex items-end justify-center bg-espresso/50 p-0 sm:items-center sm:p-5" onClick={() => setShowOrder(false)}>
@@ -88,7 +91,6 @@ export default function ProductDetails() {
         <div className="flex items-start justify-between"><div><p className="text-xs uppercase tracking-widest text-walnut/60">Order request</p><h2 className="mt-1 font-display text-2xl text-walnut">{product.name}</h2><p className="mt-1 font-medium">{formatINR(price)} per item</p></div><button type="button" onClick={() => setShowOrder(false)} className="p-2 text-walnut"><X/></button></div>
         <label className="mt-5 block text-sm">Quantity<input type="number" min="1" max={Math.max(1,product.stock)} value={quantity} onChange={e=>setQuantity(Math.max(1,Math.min(product.stock,Number(e.target.value)||1)))} className="mt-1 w-full rounded-md border border-brass/50 bg-white px-3 py-2"/></label>
         <label className="mt-4 block text-sm">Customization photo <span className="text-walnut/60">(required)</span><span className="mt-1 flex cursor-pointer items-center gap-2 rounded-lg border border-dashed border-brass bg-white p-4 text-walnut"><Upload size={18}/>{photo ? photo.name : "Choose photo to customize"}<input type="file" accept="image/jpeg,image/png,image/webp" onChange={e=>setPhoto(e.target.files?.[0] ?? null)} className="sr-only"/></span></label>
-        <label className="mt-4 block text-sm">Customization instructions (optional)<textarea value={form.note} onChange={e=>setForm({...form,note:e.target.value})} rows={2} className="mt-1 w-full rounded-md border border-brass/50 bg-white px-3 py-2" placeholder="Tell us what you would like customized"/></label>
         <h3 className="mt-5 font-medium text-walnut">Delivery details</h3>
         <div className="mt-2 grid gap-3 sm:grid-cols-2">
           <label className="text-sm sm:col-span-2">Full address<input required value={form.address} onChange={e=>setForm({...form,address:e.target.value})} className="mt-1 w-full rounded-md border border-brass/50 bg-white px-3 py-2"/></label>
@@ -97,9 +99,16 @@ export default function ProductDetails() {
           <label className="text-sm">PIN code<input required value={form.postal} onChange={e=>setForm({...form,postal:e.target.value})} className="mt-1 w-full rounded-md border border-brass/50 bg-white px-3 py-2"/></label>
           <label className="text-sm">Phone<input value={form.phone} onChange={e=>setForm({...form,phone:e.target.value})} className="mt-1 w-full rounded-md border border-brass/50 bg-white px-3 py-2"/></label>
         </div>
-        <div className="mt-4 rounded-lg bg-[#f2e9e5] p-3 text-sm"><div className="flex justify-between"><span>Product total</span><b>{formatINR(price*quantity)}</b></div><p className="mt-1 text-xs text-espresso/60">Final delivery amount and payment option are confirmed after admin approval.</p></div>
+        {photo && <>
+          <h3 className="mt-5 font-medium text-walnut">Payment mode</h3>
+          <div className="mt-2 grid grid-cols-2 gap-3">
+            <label className={`cursor-pointer rounded-lg border p-3 text-sm ${paymentMethod === "upi" ? "border-[#713B58] bg-[#f7eaf0]" : "border-brass/50 bg-white"}`}><input type="radio" name="paymentMethod" value="upi" checked={paymentMethod === "upi"} onChange={() => setPaymentMethod("upi")} className="mr-2"/>UPI</label>
+            <label className={`cursor-pointer rounded-lg border p-3 text-sm ${paymentMethod === "cod" ? "border-[#713B58] bg-[#f7eaf0]" : "border-brass/50 bg-white"}`}><input type="radio" name="paymentMethod" value="cod" checked={paymentMethod === "cod"} onChange={() => setPaymentMethod("cod")} className="mr-2"/>Cash on Delivery</label>
+          </div>
+          <div className="mt-4 rounded-lg bg-[#f2e9e5] p-3 text-sm"><div className="flex justify-between"><span>Product total</span><b>{formatINR(price*quantity)}</b></div><p className="mt-1 text-xs text-espresso/60">Choose your payment mode and place your order.</p></div>
+        </>}
         {notice && <p role="alert" className="mt-3 text-sm text-red-800">{notice}</p>}
-        <button disabled={saving} className="btn-primary mt-5 w-full justify-center">{saving ? "Sending request..." : "Submit order request"}</button>
+        <button disabled={saving || !photo} className="btn-primary mt-5 w-full justify-center disabled:opacity-50">{saving ? "Placing order..." : "Place order"}</button>
       </form>
     </div>}
   </section>;

@@ -1,79 +1,60 @@
 import { supabase } from "../lib/supabase";
 import type { Json, PaymentMethod, DbOrderRow } from "../types/database";
-import { uploadPrivateFile } from "./storage";
+import { deletePrivateFile, uploadPrivateFile } from "./storage";
+
+export interface CustomerPhotoOrderInput {
+  productId: string;
+  quantity: number;
+  shippingAddress: Json;
+  paymentMethod: PaymentMethod;
+  idempotencyKey: string;
+  photo: File;
+}
+
+/** Creates a normal order with one private customer photo attached. Price, stock, shipping and payment availability are validated by the database. */
+export async function createCustomerPhotoOrder(input: CustomerPhotoOrderInput): Promise<string> {
+  const photoPath = await uploadPrivateFile("customization-uploads", input.photo);
+  const { data, error } = await supabase.rpc("create_customer_photo_order", {
+    p_product_id: input.productId,
+    p_quantity: input.quantity,
+    p_shipping_address: input.shippingAddress,
+    p_payment_method: input.paymentMethod,
+    p_idempotency_key: input.idempotencyKey,
+    p_customization_photo_path: photoPath,
+  });
+  if (error) {
+    await deletePrivateFile("customization-uploads", photoPath);
+    throw error;
+  }
+  return data;
+}
 
 export interface SimpleOrderRequestInput {
   productId: string;
   quantity: number;
   shippingAddress: Json;
+  paymentMethod: PaymentMethod;
   idempotencyKey: string;
-  customizationPhoto?: File | null;
-  customizationNote?: string;
+  customizationPhoto: File;
 }
 
-/** Uploads the customer's optional customization photo to private storage. */
-export async function uploadOrderCustomizationPhoto(file: File): Promise<string> {
-  return uploadPrivateFile("customization-uploads", file);
-}
-
-/** Creates a pending order request. Payment is intentionally not selected yet. */
+/** Backwards-compatible name used by the product details order form. */
 export async function createSimpleOrderRequest(input: SimpleOrderRequestInput): Promise<string> {
-  const photoPath = input.customizationPhoto
-    ? await uploadOrderCustomizationPhoto(input.customizationPhoto)
-    : null;
-
-  const { data, error } = await supabase.rpc("create_customer_order_request", {
-    p_product_id: input.productId,
-    p_quantity: input.quantity,
-    p_shipping_address: input.shippingAddress,
-    p_idempotency_key: input.idempotencyKey,
-    p_customization_photo_path: photoPath,
-    p_customization_note: input.customizationNote?.trim() || null,
+  return createCustomerPhotoOrder({
+    productId: input.productId,
+    quantity: input.quantity,
+    shippingAddress: input.shippingAddress,
+    paymentMethod: input.paymentMethod,
+    idempotencyKey: input.idempotencyKey,
+    photo: input.customizationPhoto,
   });
-  if (error) throw error;
-  return data;
 }
 
-/** Admin accepts with a delivery date or declines the customer's order request. */
-export async function reviewSimpleOrder(
-  orderId: string,
-  accept: boolean,
-  expectedDeliveryDate?: string,
-  note?: string,
-): Promise<DbOrderRow> {
-  const { data, error } = await supabase.rpc("admin_review_customer_order", {
+/** Admin sets or clears the expected delivery date on an existing order. */
+export async function setSimpleOrderExpectedDeliveryDate(orderId: string, expectedDeliveryDate: string | null): Promise<DbOrderRow> {
+  const { data, error } = await supabase.rpc("admin_set_order_expected_delivery_date", {
     p_order_id: orderId,
-    p_accept: accept,
-    p_expected_delivery_date: accept ? expectedDeliveryDate ?? null : null,
-    p_note: note?.trim() || null,
-  });
-  if (error) throw error;
-  return data;
-}
-
-/** Customer chooses UPI or COD only after admin acceptance. */
-export async function selectSimpleOrderPayment(
-  orderId: string,
-  method: PaymentMethod,
-): Promise<DbOrderRow> {
-  const { data, error } = await supabase.rpc("customer_select_order_payment", {
-    p_order_id: orderId,
-    p_payment_method: method,
-  });
-  if (error) throw error;
-  return data;
-}
-
-/** Customer feedback is accepted only when the order is delivered. */
-export async function submitSimpleOrderFeedback(
-  orderId: string,
-  rating: number,
-  comment?: string,
-): Promise<string> {
-  const { data, error } = await supabase.rpc("customer_submit_order_feedback", {
-    p_order_id: orderId,
-    p_rating: rating,
-    p_comment: comment?.trim() || null,
+    p_expected_delivery_date: expectedDeliveryDate,
   });
   if (error) throw error;
   return data;

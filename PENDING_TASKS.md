@@ -22,8 +22,8 @@ This list reflects source implementation status, not live Supabase verification.
 - UPI proof submission and manual admin verification.
 - Customer order tracking and admin-managed shipment records.
 - Coupons and promotions.
-- Custom requests, personalised product/photo preparation, and quotation drafting/acceptance.
-- Accepted quotation to one UPI payment order.
+- Simple photo orders: product selection, private photo upload, UPI/COD selection, order review and tracking.
+- Admin photo download, expected delivery date and order-status progression.
 - Customer-safe payment summary, admin payment rejection, full-refund recording and payment-operation history.
 
 ## C. Remaining backend work
@@ -36,7 +36,7 @@ This list reflects source implementation status, not live Supabase verification.
 | C4 | Password reset and account lifecycle verification | Confirm redirect allow-list and reset page. |
 | C5 | Payment proof Storage security | Verify private bucket, object ownership, signed URL access and retention. |
 | C6 | Refund workflow polish | Add refund audit UI; current RPC records full external refund only and does not move funds. |
-| C7 | Rate limits / abuse controls | Review OTP, custom requests, quote acceptance and proof submissions. |
+| C7 | Rate limits / abuse controls | Review OTP, photo uploads and payment-proof submissions. |
 
 ## D. Frontend and release quality
 

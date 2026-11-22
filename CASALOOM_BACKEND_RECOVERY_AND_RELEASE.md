@@ -1,6 +1,6 @@
 # CasaLoom backend recovery and release plan
 
-**Purpose:** safely bring the existing Supabase backend into a consistent state, then verify standard checkout, manual UPI, manual shipping, and personalised quotation payments.
+**Purpose:** safely bring the existing Supabase backend into a consistent state, then verify standard checkout, simple photo orders, manual UPI, and manual shipping.
 
 ## Critical environment warning
 
@@ -14,7 +14,9 @@ The Supabase screenshots supplied during development show the `main` project mar
 - `202611120001_customer_checkout_support.sql` replaces the standard checkout RPC and depends on the order tables.
 - `202611190001_personalised_quotations.sql` creates the quotation tables/RPCs.
 - `202611200001_quotation_payments.sql` adds `orders.quotation_id` and creates a payment order from an accepted quotation. It depends on both the quotation schema and order/payment tables.
-- `202611210001_payment_operations_hardening.sql` restricts direct payment-record reads, adds customer-safe payment reads, admin rejection/refund RPCs, and payment-operation history. It depends on the order/payment schema.
+- `202611210001_payment_operations_hardening.sql` restricts direct payment-record reads, adds customer-safe payment reads, admin payment/refund operations, and payment-operation history. It depends on the order/payment schema.
+- `202611220001_simple_customer_order_workflow.sql` adds the order photo path, expected-delivery date and notification table.
+- `202611220002_simple_photo_order_no_approval.sql` implements product + photo + payment-mode order creation, admin delivery-date updates and removes the approval/decline RPC path.
 
 ## Required migration order for a fresh staging database
 
@@ -37,6 +39,8 @@ Use the repository's chronological order. Do not skip earlier prerequisites or a
 15. `202611190001_personalised_quotations.sql`
 16. `202611200001_quotation_payments.sql`
 17. `202611210001_payment_operations_hardening.sql`
+18. `202611220001_simple_customer_order_workflow.sql`
+19. `202611220002_simple_photo_order_no_approval.sql`
 
 If a migration has already been applied successfully, do not blindly replay it. First inspect actual objects and the migration history. SQL Editor manual execution may not be recorded in `supabase_migrations.schema_migrations`.
 
@@ -69,12 +73,11 @@ If the database is not a fresh staging database, run `supabase/verification/back
 - Admin rejection requires a reason; the customer can resubmit according to the existing proof RPC.
 - Customer reads use the safe payment summary RPC, not raw verification metadata.
 
-### Personalised quotation payment
-- Only an accepted, payment-eligible INR quotation can create a payment order.
-- One quotation maps to at most one order.
-- Order amount is copied from the database quotation total, never accepted from the browser.
-- The payment remains pending until admin verifies UPI settlement.
-- Production does not start merely because a quotation was accepted or a proof was uploaded.
+### Simple photo orders
+- A customer selects a published product marked Customizable, uploads one private photo, selects UPI/COD and places the order.
+- The existing order RPC calculates the price, shipping and payment state server-side.
+- UPI orders continue to the manual UPI payment page; COD is recorded as due on delivery.
+- Admin downloads the attached photo, sets expected delivery and updates the order status. No accept/reject or quotation stage is used.
 
 ### Manual shipping
 - Admin enters carrier, tracking number and tracking URL manually.
@@ -83,7 +86,7 @@ If the database is not a fresh staging database, run `supabase/verification/back
 
 ### Security
 - Customers cannot write order/payment/shipment rows directly.
-- Customer A cannot read Customer B's orders, quotations, or payment summaries.
+- Customer A cannot read Customer B's orders or payment summaries.
 - Only super admins can verify/reject/refund payments or change operational order statuses.
 - Refund RPC records a full refund after the external refund has actually been sent; it does not transfer money itself.
 - Verify storage bucket privacy and RLS separately, especially payment proof objects.
@@ -94,6 +97,6 @@ If the database is not a fresh staging database, run `supabase/verification/back
 - Shipping is manual; no courier integration is configured.
 - UPI verification is manual; no payment gateway is integrated.
 - Refund recording is an audit/status operation, not an automated bank/UPI refund.
-- Customer self-service cancellation/return request workflow still needs a dedicated customer RPC and UI; the current order migration supports admin status changes and admin receipt of returned stock.
+- Customer cancellation/return self-service is not part of the simplified launch workflow; admins manage order status.
 - Full end-to-end RLS and staging acceptance tests have not been run in this environment.
 - The frontend build has not been verified in this environment because dependencies are not installed and npm registry access is unavailable.

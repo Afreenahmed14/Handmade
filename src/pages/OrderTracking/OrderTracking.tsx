@@ -84,6 +84,7 @@ function TrackOrder({ orderRef }: { orderRef: string }) {
           <p className="text-sm text-walnut/70">Order tracking</p>
           <h1 className="text-4xl text-walnut">{tracking.orderNumber}</h1>
           <p className="mt-1 text-sm text-walnut/70">Placed {formatDateTime(tracking.createdAt)} · {customerPaymentLabel[tracking.paymentStatus]}</p>
+          <p className="mt-2 text-sm text-walnut/80">Expected delivery: <strong>{tracking.expectedDeliveryDate ? new Date(`${tracking.expectedDeliveryDate}T00:00:00`).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) : "To be confirmed"}</strong></p>
         </div>
         <div className="flex flex-col items-end gap-2">
           <OrderStatusBadge status={tracking.orderStatus} />

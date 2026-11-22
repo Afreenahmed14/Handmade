@@ -232,33 +232,20 @@ export interface Database {
           inventory_value: number;
         }[];
       };
-      create_customer_order_request: {
+      create_customer_photo_order: {
         Args: {
           p_product_id: string;
           p_quantity: number;
           p_shipping_address: Json;
+          p_payment_method: PaymentMethod;
           p_idempotency_key: string;
-          p_customization_photo_path?: string | null;
-          p_customization_note?: string | null;
+          p_customization_photo_path: string;
         };
         Returns: string;
       };
-      admin_review_customer_order: {
-        Args: {
-          p_order_id: string;
-          p_accept: boolean;
-          p_expected_delivery_date?: string | null;
-          p_note?: string | null;
-        };
+      admin_set_order_expected_delivery_date: {
+        Args: { p_order_id: string; p_expected_delivery_date: string | null };
         Returns: DbOrderRow;
-      };
-      customer_select_order_payment: {
-        Args: { p_order_id: string; p_payment_method: PaymentMethod };
-        Returns: DbOrderRow;
-      };
-      customer_submit_order_feedback: {
-        Args: { p_order_id: string; p_rating: number; p_comment?: string | null };
-        Returns: string;
       };
       get_customer_registration_analytics: {
         Args: { p_months?: number };
@@ -339,51 +326,6 @@ export interface Database {
       get_admin_payment_summary: {
         Args: { p_from_date?: string | null; p_to_date?: string | null };
         Returns: { summary: Json; status_distribution: Json; method_distribution: Json }[];
-      };
-      create_customer_custom_request: {
-        Args: {
-          p_product_id: string | null; p_requested_product: string; p_title: string; p_description: string;
-          p_requirements?: Json; p_preferences?: Json; p_budget_min_inr?: number | null;
-          p_budget_max_inr?: number | null; p_attachment_paths?: string[];
-        };
-        Returns: string;
-      };
-      admin_update_custom_request: {
-        Args: {
-          p_request_id: string; p_new_status: CustomRequestStatus | null;
-          p_status_reason?: string | null; p_internal_note?: string | null; p_customer_response?: string | null;
-        };
-        Returns: string;
-      };
-      admin_save_photo_preparation: {
-        Args: {
-          p_request_id: string; p_original_path: string; p_prepared_path: string; p_preparation_meta: Json;
-          p_production_notes?: string | null; p_mark_ready?: boolean;
-        };
-        Returns: string;
-      };
-      admin_update_photo_preparation: {
-        Args: { p_preparation_id: string; p_production_notes: string | null; p_mark_ready: boolean };
-        Returns: string;
-      };
-      admin_save_quotation_draft: {
-        Args: {
-          p_request_id: string; p_items: Json; p_discount_inr?: number; p_shipping_charge_inr?: number;
-          p_customer_notes?: string | null; p_internal_notes?: string | null; p_validity_days?: number; p_quotation_id?: string | null;
-        };
-        Returns: string;
-      };
-      admin_send_quotation: { Args: { p_quotation_id: string }; Returns: string };
-      admin_discard_quotation_draft: { Args: { p_quotation_id: string }; Returns: string };
-      get_my_quotations: { Args: { p_request_id: string }; Returns: Json };
-      get_my_quotation_overview: {
-        Args: { p_request_ids: string[] };
-        Returns: { request_id: string; quotation_id: string; version: number; status: QuotationStatus; final_total_inr: number; valid_until: string | null }[];
-      };
-      customer_create_quotation_payment_order: { Args: { p_quotation_id: string }; Returns: string };
-      customer_respond_to_quotation: {
-        Args: { p_quotation_id: string; p_decision: "accept" | "decline"; p_reason?: string | null };
-        Returns: string;
       };
       get_admin_store_settings: { Args: Record<string, never>; Returns: Json };
       admin_update_store_settings: {

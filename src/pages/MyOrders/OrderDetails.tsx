@@ -7,6 +7,7 @@ import { useAuth } from "../../context/AuthContext";
 import { formatINR } from "../../utils/currency";
 import { friendlyOrderError, getMyOrderDetail, getOrderTracking, type CustomerOrderDetail, type OrderTracking } from "../../services/customerOrders";
 import { shippingAddressLines } from "../../utils/address";
+import { createPrivateUploadUrl } from "../../services/storage";
 import { canOpenPaymentPage, customerOrderStatusMessage, customerPaymentLabel, formatDateTime } from "../../utils/orderStatus";
 
 export default function OrderDetails() {
@@ -16,6 +17,7 @@ export default function OrderDetails() {
   const [detail, setDetail] = useState<CustomerOrderDetail | null>(null);
   const [tracking, setTracking] = useState<OrderTracking | null>(null);
   const [trackingFailed, setTrackingFailed] = useState(false);
+  const [photoUrl, setPhotoUrl] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [attempt, setAttempt] = useState(0);
@@ -27,6 +29,7 @@ export default function OrderDetails() {
     setError("");
     setDetail(null);
     setTracking(null);
+    setPhotoUrl("");
     setTrackingFailed(false);
     void (async () => {
       try {
@@ -34,6 +37,12 @@ export default function OrderDetails() {
         if (!active) return;
         setDetail(result);
         setLoading(false);
+        if (result.order.customization_photo_path) {
+          try {
+            const signed = await createPrivateUploadUrl("customization-uploads", result.order.customization_photo_path);
+            if (active) setPhotoUrl(signed);
+          } catch { /* The order details remain available if the private photo cannot be previewed. */ }
+        }
         // Shipment details are secondary: if they fail, the rest of the order still shows.
         try {
           const next = await getOrderTracking(result.order.id);
@@ -83,6 +92,9 @@ export default function OrderDetails() {
         {canOpenPaymentPage(order) && <Link to={`/payment/${order.id}`} className="btn-outline px-5 py-2.5 text-sm">{order.payment_status === "verification_pending" ? "View payment" : "Complete payment"}</Link>}
       </div>
 
+      {photoUrl && <div className="mt-6 border border-brass/40 p-5"><h2 className="text-xl text-walnut">Your uploaded photo</h2><img src={photoUrl} alt="Photo attached to this order" className="mt-3 max-h-64 rounded-lg object-contain" /></div>}
+      {order.expected_delivery_date && <p className="mt-4 text-sm text-walnut">Expected delivery: <strong>{new Date(`${order.expected_delivery_date}T00:00:00`).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</strong></p>}
+
       <div className="mt-8 grid gap-6 md:grid-cols-[1.4fr_1fr]">
         <div className="border border-brass/40 p-6">
           <h2 className="text-xl text-walnut">Items</h2>
@@ -107,7 +119,7 @@ export default function OrderDetails() {
           <div className="border border-brass/40 p-6">
             <h2 className="text-xl text-walnut">Payment</h2>
             <dl className="mt-3 grid gap-2 text-sm">
-              <div className="flex justify-between gap-4"><dt className="text-walnut/70">Method</dt><dd>{order.payment_method === "upi" ? "UPI" : "Cash on delivery"}</dd></div>
+              <div className="flex justify-between gap-4"><dt className="text-walnut/70">Method</dt><dd>{order.payment_method === "upi" ? "UPI" : order.payment_method === "cod" ? "Cash on delivery" : "Not selected"}</dd></div>
               <div className="flex justify-between gap-4"><dt className="text-walnut/70">Status</dt><dd className="font-medium">{customerPaymentLabel[order.payment_status]}</dd></div>
               {payment && <div className="flex justify-between gap-4"><dt className="text-walnut/70">Amount</dt><dd>{formatINR(payment.amount_inr)}</dd></div>}
               {payment?.transaction_reference && <div className="flex justify-between gap-4"><dt className="text-walnut/70">Reference</dt><dd className="break-all">{payment.transaction_reference}</dd></div>}

@@ -1,4 +1,4 @@
-import { ArrowLeft, Bell, CreditCard, LayoutDashboard, LogOut, Package, ShoppingCart, Tags, Settings, Users, Boxes, Percent, ClipboardList } from "lucide-react";
+import { ArrowLeft, Bell, CreditCard, LayoutDashboard, LogOut, Package, ShoppingCart, Tags, Settings, Users, Boxes, Percent } from "lucide-react";
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
@@ -44,7 +44,6 @@ export default function AdminLayout() {
           <NavLink to="/admin/payments" className={({ isActive }) => `admin-nav-link ${isActive ? "is-active" : ""}`}><CreditCard size={16} />Payments</NavLink>
           <NavLink to="/admin/notifications" className={({ isActive }) => `admin-nav-link ${isActive ? "is-active" : ""}`}><Bell size={16} />Notifications</NavLink>
           <NavLink to="/admin/coupons" className={({ isActive }) => `admin-nav-link ${isActive ? "is-active" : ""}`}><Percent size={16} />Coupons</NavLink>
-          <NavLink to="/admin/custom-requests" className={({ isActive }) => `admin-nav-link ${isActive ? "is-active" : ""}`}><ClipboardList size={16} />Custom requests</NavLink>
           <NavLink to="/admin/settings" className={({ isActive }) => `admin-nav-link ${isActive ? "is-active" : ""}`}><Settings size={16} />Settings</NavLink>
         </nav>
         <main className="casaloom-admin-content min-w-0 rounded-2xl border border-white/80 bg-white/35 p-3 shadow-[0_10px_35px_rgba(100,48,78,.07)] sm:p-4">{error && <p role="alert" className="mb-4 text-sm text-red-800">{error}</p>}<Outlet /></main>
